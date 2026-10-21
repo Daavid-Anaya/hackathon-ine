@@ -45,10 +45,12 @@ configuración](docs/local-setup.md) para conocer los permisos, el uso interacti
 y la reconstrucción de la imagen.
 
 Los ZIP/PDF originales y el entorno de ejecución quedan fuera de Git. La procedencia
-de los archivos se registra en `data/sources.json` generado por el descargador. Todavía no
-se han implementado la limpieza, la segmentación, una interfaz ni un despliegue.
+de los archivos se registra en el [manifiesto de fuentes](data/sources.json), generado
+por el descargador. Todavía no se han implementado la limpieza, la segmentación,
+una interfaz ni un despliegue.
 
 ## Documentos del proyecto
 
 - [Configuración y ejecución local](docs/local-setup.md)
+- [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
