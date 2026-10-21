@@ -25,7 +25,7 @@ Las dependencias condicionan el cierre: se pueden preparar plantillas, índice y
 | :--- | :--- | :--- | :--- | :--- |
 | T01 | Verificar constancia de registro y requisitos: equipo paritario de 2 a 4 integrantes, edad de 18 a 35 años al cierre, nacionalidad y residencia en México, credencial vigente, restricciones de participación y representante con cuenta bancaria mexicana a su nombre. Registrar pendientes; si falta el registro, consultar a la organización sin asumir admisión. | — | Por asignar | Completada |
 | T02 | Descargar los formatos oficiales de ambas cartas y coordinar las firmas de todas las personas integrantes. **Cierre previsto: 22 de octubre**, con documentos completos y legibles. Guardarlos fuera del repositorio público. | T01 | Por asignar | Pendiente |
-| T03 | Descargar los datos agregados CCPC y su documentación. Registrar URL, fecha de descarga, elección, cobertura y versión si existe; conservar una copia original sin modificar. Cierre: inventario de fuentes y diccionarios disponibles, con ausencias documentadas. | — | Por asignar | Pendiente |
+| T03 | Descargar los datos agregados CCPC y su documentación. Registrar URL, fecha de descarga, elección, cobertura y versión si existe; conservar una copia original sin modificar. Cierre: inventario de fuentes y diccionarios disponibles, con ausencias documentadas. | — | Por asignar | Completada |
 | T04 | Definir qué representa cada fila y auditar variables, claves geográficas, denominadores, faltantes, supresiones y comparabilidad temporal. Cierre: matriz de variables y unidad de análisis justificadas; escolaridad solo si está disponible y su incorporación es válida. No reconstruir cruces inexistentes ni historiales individuales a partir de agregados. | T03 | Por asignar | Pendiente |
 | T05 | Preparar el entorno local con Python, Pandas y Scikit-learn, registrar versiones e iniciar instrucciones de ejecución y el índice del documento técnico. Cierre: entorno verificable y estructura de trabajo local. No requiere publicar ni desplegar. | — | Por asignar | Pendiente |
 
@@ -83,5 +83,3 @@ La omisión de entregables mínimos obligatorios es causa de descalificación. V
 
 - [Convocatoria](Convocatoria_Hackaton-1.pdf): bases primera y quinta (participación y registro), cuarta (Reto 1), sexta (entregables), séptima (envío) y octava (evaluación).
 - [Rúbrica de evaluación](<Rúbrica de evaluación_Hackaton .pdf>): distribución de puntos y niveles de desempeño.
-
-**Siguiente acción:** asignar responsables y comenzar T01, T03 y T05 en paralelo; coordinar T02 sin esperar al cierre del análisis.
