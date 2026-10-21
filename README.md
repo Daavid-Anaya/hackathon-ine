@@ -53,4 +53,5 @@ una interfaz ni un despliegue.
 
 - [Configuración y ejecución local](docs/local-setup.md)
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
+- [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
