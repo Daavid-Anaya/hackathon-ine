@@ -1,0 +1,59 @@
+services:
+  analysis:
+    build: .
+    image: hackathon-ine-python:local
+    init: true
+    read_only: true
+    network_mode: none
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      HACKATHON_CONTAINER_ROLE: analysis
+    tmpfs:
+      - /tmp:rw,nosuid,noexec,size=128m
+    volumes:
+      - type: bind
+        source: ./scripts
+        target: /workspace/scripts
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./tests
+        target: /workspace/tests
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./requirements.txt
+        target: /workspace/requirements.txt
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./data
+        target: /workspace/data
+        read_only: true
+        bind:
+          create_host_path: false
+      - ./data/processed:/workspace/data/processed
+      - ./outputs:/workspace/outputs
+
+  download:
+    extends:
+      service: analysis
+    profiles:
+      - download
+    network_mode: bridge
+    environment:
+      HACKATHON_CONTAINER_ROLE: download
+    command: ["python", "scripts/download_ccpc.py"]
+    volumes:
+      - type: bind
+        source: ./data
+        target: /workspace/data
+        read_only: false
+        bind:
+          create_host_path: false

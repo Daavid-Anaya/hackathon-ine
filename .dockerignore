@@ -1,0 +1,9 @@
+# Solo los archivos reproducibles necesarios para la ejecución entran al contexto de construcción.
+**
+!Dockerfile
+!requirements.in
+!requirements.txt
+!scripts/
+!scripts/*.py
+!tests/
+!tests/*.py
