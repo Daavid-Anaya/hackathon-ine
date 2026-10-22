@@ -1,4 +1,4 @@
-"""Valida la fuente CCPC 2024 y exporta los grupos analíticos observados sin conexión."""
+"""Valida las fuentes CCPC y exporta grupos analíticos separados por elección, sin conexión."""
 
 import argparse
 from collections import defaultdict
@@ -22,6 +22,7 @@ COLUMNS = "AELEC FELECCION EDOCVE EDONOM MPIOCVE MPIONOM SECCION TIPOSEC DEF DEL
 COUNTS = ["LN", "SV", "NV", "NS"]
 BANDS = ["18-24", "25-34", "35-44", "45-59", "60+"]
 MAX_INTEGER = 2**63 - 1
+YEARS = (2009, 2012, 2015, 2018, 2021, 2024)
 
 
 def require(condition, message):
@@ -46,15 +47,15 @@ def integers(values, field, minimum, maximum=MAX_INTEGER, district=False):
     return numbers if district else numbers.astype("int64")
 
 
-def normalize(frame):
+def normalize(frame, year=2024):
     require(list(frame.columns) == COLUMNS, "Cambió el esquema de columnas")
     for field in ("FELECCION", "EDONOM", "MPIONOM"):
         require(not frame[field].str.strip().eq("").any(), f"{field}: etiqueta faltante")
-    limits = {"AELEC": (2024, 2024), "EDOCVE": (1, 32), "MPIOCVE": (1, 570),
-              "SECCION": (1, MAX_INTEGER), "SEXO": (0, 2), "EDAD": (18, MAX_INTEGER)}
+    limits = {"AELEC": (year, year), "EDOCVE": (1, 32), "MPIOCVE": (1, 570),
+              "SECCION": (1, MAX_INTEGER), "SEXO": (0, 2 if year == 2024 else 1), "EDAD": (18, MAX_INTEGER)}
     for field, (low, high) in limits.items():
         frame[field] = integers(frame[field], field, low, high)
-    for field, high in (("DEF", 40), ("DEL", 45)):
+    for field, high in (("DEF", 40 if year == 2024 else 41), ("DEL", 45)):
         frame[field] = integers(frame[field], field, 1, high, district=True)
     require(frame["TIPOSEC"].isin(["U", "M", "R"]).all(), "TIPOSEC: categoría inválida")
     for field in COUNTS:
@@ -84,7 +85,7 @@ def aggregate_member(archive, member, chunk_size, groups, report, entities):
             chunks = pd.read_csv(stream, dtype=str, keep_default_na=False, chunksize=chunk_size,
                                  index_col=False, skip_blank_lines=False)
             for frame in chunks:
-                frame = normalize(frame)
+                frame = normalize(frame, report["election_year"])
                 states = frame["EDOCVE"].unique()
                 require(len(states) == 1, f"{member}: se esperaba una entidad por CSV")
                 current = int(states[0])
@@ -132,12 +133,12 @@ def aggregate_member(archive, member, chunk_size, groups, report, entities):
     report["source_rows"] += row_count
 
 
-def analytical_rows(groups):
+def analytical_rows(groups, year=2024):
     rows = []
     for (state, sex, band), counts in sorted(groups.items(), key=lambda pair: (pair[0][0], pair[0][1], BANDS.index(pair[0][2]))):
         known = counts["SV"] + counts["NV"]
         rows.append({
-            "AELEC": 2024, "EDOCVE": f"{state:02d}", "SEXO": str(sex), "age_band": band,
+            "AELEC": year, "EDOCVE": f"{state:02d}", "SEXO": str(sex), "age_band": band,
             **counts, "known_denominator": known,
             "participation_pct": f"{100 * counts['SV'] / known:.8f}" if known else "",
             "abstention_pct": f"{100 * counts['NV'] / known:.8f}" if known else "",
@@ -147,23 +148,23 @@ def analytical_rows(groups):
     return rows
 
 
-def clean(root, chunk_size, run_name):
+def clean(root, chunk_size, run_name, year=2024, destination=None):
     root = root.resolve()
     parent = root / "data" / "processed"
-    destination = parent / run_name
+    destination = destination if destination is not None else parent / run_name
     require(not destination.exists(), "La salida ya existe; usa otro --run-name para conservarla")
     manifest = root / "data" / "sources.json"
     manifest_hash = sha256(manifest)
     entries = json.loads(manifest.read_text(encoding="utf-8"))
-    selected = [entry for entry in entries if entry["election_year"] == 2024]
-    require(len(selected) == 1, "Se requiere una única fuente 2024 en el manifiesto")
+    selected = [entry for entry in entries if entry["election_year"] == year]
+    require(len(selected) == 1, f"Se requiere una única fuente {year} en el manifiesto")
     entry = selected[0]
     source = (root / entry["local_path"]).resolve()
     require(source.is_relative_to((root / "data" / "raw").resolve()), "La fuente debe estar en data/raw")
     require(source.stat().st_size == entry["bytes"] and sha256(source) == entry["sha256"],
             "Falló la comprobación de integridad de la fuente")
     report = {
-        "election_year": 2024, "unit": ["EDOCVE", "SEXO", "age_band"],
+        "election_year": year, "unit": ["EDOCVE", "SEXO", "age_band"],
         "manifest_sha256": manifest_hash, "pipeline_sha256": sha256(Path(__file__)),
         "python": sys.version.split()[0], "pandas": pd.__version__,
         "source": {key: entry[key] for key in ("local_path", "sha256", "bytes")},
@@ -173,10 +174,11 @@ def clean(root, chunk_size, run_name):
         "zero_known_denominator_rows": 0, "election_date_literals": set(), "members": [],
         "suppression_policy": "undocumented; unknown count tokens are rejected, never imputed",
         "transformations": [
-            "Select the 2024 manifest entry; leave other elections untouched.",
+            f"Select the {year} manifest entry; leave other elections untouched.",
             "Normalize integer identifiers; export EDOCVE as two digits and SEXO as a category.",
             "Normalize blank districts to missing; preserve literal election dates.",
-            "Preserve valid zero counts and nonbinary sex code 2; never create unobserved combinations.",
+            ("Preserve valid zero counts and nonbinary sex code 2; never create unobserved combinations."
+             if year == 2024 else "Preserve valid zero counts and sex codes 0/1; never create unobserved combinations or infer historical sex code 2."),
             "Band ages as 18-24, 25-34, 35-44, 45-59, 60+; retain and flag ages over 110.",
             "Sum counts before rates; retain rows without known participation; undefined rates are blank.",
         ],
@@ -192,11 +194,11 @@ def clean(root, chunk_size, run_name):
         members = archive.namelist()
         require(members == entry["members"] and len(members) == len(set(members)), "Cambió el inventario del ZIP")
         csvs = sorted(member for member in members if member.lower().endswith(".csv"))
-        require(len(csvs) == 32, "Se requieren 32 CSV de entidades para 2024")
+        require(len(csvs) == 32, f"Se requieren 32 CSV de entidades para {year}")
         for member in csvs:
             aggregate_member(archive, member, chunk_size, groups, report, entities)
     require(entities == set(range(1, 33)), "La cobertura debe incluir las 32 entidades")
-    rows = analytical_rows(groups)
+    rows = analytical_rows(groups, year)
     report["election_date_literals"] = sorted(report["election_date_literals"])
     report["analytical_rows"] = len(rows)
     report["analytical_totals"] = {field: sum(row[field] for row in rows) for field in COUNTS}
@@ -224,6 +226,49 @@ def clean(root, chunk_size, run_name):
             "totals": report["analytical_totals"]}
 
 
+def clean_all(root, chunk_size, run_name):
+    """Publica las seis elecciones juntas solo después de validar cada paquete anual."""
+    root = root.resolve()
+    parent = root / "data" / "processed"
+    destination = parent / run_name
+    require(not destination.exists(), "La salida ya existe; usa otro --run-name para conservarla")
+    manifest = root / "data" / "sources.json"
+    manifest_hash = sha256(manifest)
+    entries = json.loads(manifest.read_text(encoding="utf-8"))
+    parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=parent, prefix=".clean-all-") as temporary:
+        staging = Path(temporary) / "bundle"
+        staging.mkdir()
+        elections = []
+        for year in YEARS:
+            result = clean(root, chunk_size, run_name, year, destination=staging / str(year))
+            # Los destinos del resumen son relativos al paquete final, no a la carpeta temporal.
+            result["directory"] = str(year)
+            result["election_year"] = year
+            elections.append(result)
+        require(sha256(manifest) == manifest_hash, "Cambió la integridad del manifiesto durante el análisis")
+        for entry in entries:
+            if entry["election_year"] in YEARS:
+                require(sha256(root / entry["local_path"]) == entry["sha256"],
+                        "Cambió la integridad de una fuente durante el análisis multianual")
+        summary = {
+            "years": list(YEARS), "manifest_sha256": manifest_hash, "elections": elections,
+            "source_rows": sum(item["source_rows"] for item in elections),
+            "analytical_rows": sum(item["analytical_rows"] for item in elections),
+            "limitations": [
+                "Annual tables are separate cross-sections, not individual histories or pooled population counts.",
+                "Compare election series 2009/2015/2021 and 2012/2018/2024 with caution; geography and coverage change.",
+                "Historical absence of sex code 2 is not a zero population; no absent groups are fabricated.",
+            ],
+        }
+        (staging / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
+        require(not destination.exists(), "La salida ya existe")
+        staging.rename(destination)
+    return {"status": "ok", "directory": destination.relative_to(root).as_posix(),
+            "years": list(YEARS), "source_rows": summary["source_rows"],
+            "analytical_rows": summary["analytical_rows"]}
+
+
 def positive_integer(value):
     parsed = int(value)
     if parsed < 1:
@@ -238,13 +283,22 @@ def run_label(value):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Limpia y valida CCPC 2024 sin modificar originales ni usar la red.")
+    parser = argparse.ArgumentParser(description="Limpia y valida CCPC 2024 por defecto; admite las seis elecciones sin modificar originales ni usar la red.")
     parser.add_argument("--root", type=Path, default=ROOT, help="Raíz local con data/sources.json y data/raw")
     parser.add_argument("--chunk-size", type=positive_integer, default=150000, help="Filas por bloque (predeterminado: 150000)")
-    parser.add_argument("--run-name", type=run_label, default="ccpc_2024", help="Carpeta nueva en data/processed (predeterminada: ccpc_2024)")
+    parser.add_argument("--run-name", type=run_label, help="Carpeta nueva en data/processed (predeterminada: ccpc_AÑO o ccpc_all)")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--year", type=int, choices=YEARS, action="append", help="Elección que se procesa (predeterminada: 2024)")
+    selection.add_argument("--all-years", action="store_true", help="Procesa las seis elecciones en un paquete con carpetas anuales separadas")
     args = parser.parse_args()
+    if args.year and len(set(args.year)) > 1:
+        parser.error("Selecciona un solo año con --year o utiliza --all-years")
+    year = args.year[0] if args.year else 2024
     try:
-        print(json.dumps(clean(args.root, args.chunk_size, args.run_name), ensure_ascii=True))
+        run_name = args.run_name or ("ccpc_all" if args.all_years else f"ccpc_{year}")
+        result = (clean_all(args.root, args.chunk_size, run_name) if args.all_years
+                  else clean(args.root, args.chunk_size, run_name, year))
+        print(json.dumps(result, ensure_ascii=True))
     except (OSError, ValueError, TypeError, KeyError, OverflowError, zipfile.BadZipFile, pd.errors.ParserWarning) as error:
         print(f"Error de limpieza: {error}", file=sys.stderr)
         return 1

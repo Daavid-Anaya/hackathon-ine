@@ -32,8 +32,9 @@ class CleaningTests(unittest.TestCase):
         (self.root / "data" / "raw").mkdir(parents=True)
         self.members = {f"state-{state}.csv": [row(state)] for state in range(1, 33)}
 
-    def prepare(self, columns=COLUMNS):
-        archive = self.root / "data" / "raw" / "fixture.zip"
+    def prepare(self, columns=COLUMNS, year=2024, append=False):
+        filename = "fixture.zip" if year == 2024 else f"fixture-{year}.zip"
+        archive = self.root / "data" / "raw" / filename
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
             for name, rows in self.members.items():
                 text = io.StringIO(newline="")
@@ -41,12 +42,14 @@ class CleaningTests(unittest.TestCase):
                 writer.writeheader()
                 writer.writerows(rows)
                 output.writestr(name, text.getvalue().encode("utf-8-sig"))
-        manifest = [{
-            "election_year": 2024, "local_path": "data/raw/fixture.zip",
+        manifest_path = self.root / "data" / "sources.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if append else []
+        manifest.append({
+            "election_year": year, "local_path": f"data/raw/{filename}",
             "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
             "bytes": archive.stat().st_size, "members": list(self.members),
-        }]
-        (self.root / "data" / "sources.json").write_text(json.dumps(manifest), encoding="utf-8")
+        })
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
         self.originals = {
             path: path.read_bytes() for path in (self.root / "data").rglob("*") if path.is_file()
         }
@@ -203,6 +206,131 @@ class CleaningTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertEqual(result.stdout, "")
         self.assertEqual(list((self.root / "data").iterdir()), [self.root / "data/raw"])
+
+    def prepare_history(self, invalid_last_year=False):
+        years = (2009, 2012, 2015, 2018, 2021, 2024)
+        for year in years:
+            self.members = {
+                f"state-{state}.csv": [row(
+                    state, AELEC=str(year), FELECCION=f"literal-{year}",
+                    EDONOM=f"Entity {year}-{state}", DEF="40" if year == 2024 else "41",
+                    DEL=" " if year in (2009, 2012) else "1",
+                )] for state in range(1, 33)
+            }
+            if invalid_last_year and year == 2024:
+                self.members["state-1.csv"][0]["NS"] = "2"
+            self.prepare(year=year, append=year != years[0])
+
+    def test_year_selection_preserves_historical_domains_and_dates(self):
+        self.prepare_history()
+        for year in (2009, 2012, 2015, 2018, 2021, 2024):
+            with self.subTest(year=year):
+                result = self.run_command("--year", str(year))
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stderr, "")
+                summary = json.loads(result.stdout)
+                self.assertEqual(summary["directory"], f"data/processed/ccpc_{year}")
+                self.assertEqual(summary["totals"], {"LN": 320, "SV": 192, "NV": 96, "NS": 32})
+                folder = self.root / "data/processed" / f"ccpc_{year}"
+                with (folder / "table.csv").open(encoding="utf-8", newline="") as stream:
+                    rows = list(csv.DictReader(stream))
+                self.assertEqual(len(rows), 32)
+                self.assertEqual({item["AELEC"] for item in rows}, {str(year)})
+                self.assertEqual({item["SEXO"] for item in rows}, {"0"})
+                report = json.loads((folder / "report.json").read_text(encoding="utf-8"))
+                self.assertEqual(report["election_year"], year)
+                self.assertEqual(report["election_date_literals"], [f"literal-{year}"])
+                self.assertEqual(report["missing_district_rows"]["DEL"], 32 if year in (2009, 2012) else 0)
+                self.assertEqual(report["source_totals"], report["analytical_totals"])
+        self.assert_originals_unchanged()
+
+    def test_all_years_are_separate_reproducible_and_never_overwritten(self):
+        self.prepare_history()
+        first = self.run_command("--all-years", "--chunk-size", "1")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.assertEqual(first.stderr, "")
+        summary = json.loads(first.stdout)
+        self.assertEqual(summary["status"], "ok")
+        self.assertEqual(summary["directory"], "data/processed/ccpc_all")
+        self.assertEqual(summary["years"], [2009, 2012, 2015, 2018, 2021, 2024])
+        destination = self.root / "data/processed/ccpc_all"
+        self.assertEqual({item.name for item in destination.iterdir()}, {
+            "2009", "2012", "2015", "2018", "2021", "2024", "summary.json",
+        })
+        self.assertEqual(json.loads((destination / "summary.json").read_text(encoding="utf-8"))["source_rows"], 192)
+        repeated = self.run_command("--all-years", "--chunk-size", "2", "--run-name", "repeat_all")
+        self.assertEqual(repeated.returncode, 0, repeated.stderr)
+        for path in destination.rglob("*"):
+            if path.is_file():
+                other = self.root / "data/processed/repeat_all" / path.relative_to(destination)
+                self.assertEqual(path.read_bytes(), other.read_bytes())
+        before = {path: path.read_bytes() for path in destination.rglob("*") if path.is_file()}
+        refused = self.run_command("--all-years")
+        self.assertEqual(refused.returncode, 1)
+        self.assertEqual(refused.stdout, "")
+        self.assertIn("ya existe", refused.stderr)
+        self.assertEqual(before, {path: path.read_bytes() for path in destination.rglob("*") if path.is_file()})
+        self.assert_originals_unchanged()
+
+    def test_all_years_failure_does_not_publish_partial_results(self):
+        self.prepare_history(invalid_last_year=True)
+        existing = self.root / "data/processed/prior"
+        existing.mkdir(parents=True)
+        (existing / "report.json").write_bytes(b"previous-run")
+        result = self.run_command("--all-years")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("LN = SV + NV + NS", result.stderr)
+        self.assertEqual(list(existing.parent.iterdir()), [existing])
+        self.assertEqual((existing / "report.json").read_bytes(), b"previous-run")
+        self.assert_originals_unchanged()
+
+    def test_year_specific_sex_and_district_validation(self):
+        for year, changes, error in [
+            (2021, {"SEXO": "2"}, "SEXO"),
+            (2009, {"DEF": "42"}, "DEF"),
+            (2024, {"DEF": "41"}, "DEF"),
+            (2012, {"AELEC": "2024"}, "AELEC"),
+        ]:
+            with self.subTest(year=year, changes=changes):
+                self.members = {f"state-{state}.csv": [row(state, AELEC=str(year))]
+                                for state in range(1, 33)}
+                self.members["state-1.csv"][0].update(changes)
+                self.prepare(year=year)
+                result = self.run_command("--year", str(year))
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(result.stdout, "")
+                self.assertIn(error, result.stderr)
+                self.assert_originals_unchanged()
+                processed = self.root / "data/processed"
+                self.assertTrue(not processed.exists() or not list(processed.iterdir()))
+
+    def test_explicit_2024_matches_default_and_year_options_are_strict(self):
+        self.prepare()
+        default = self.run_command()
+        explicit = self.run_command("--year", "2024", "--run-name", "explicit")
+        self.assertEqual(default.returncode, 0, default.stderr)
+        self.assertEqual(explicit.returncode, 0, explicit.stderr)
+        for filename in ("table.csv", "report.json"):
+            parent = self.root / "data/processed"
+            self.assertEqual((parent / "ccpc_2024" / filename).read_bytes(), (parent / "explicit" / filename).read_bytes())
+        for arguments in [("--year", "2020"), ("--year", "2024", "--all-years")]:
+            with self.subTest(arguments=arguments):
+                result = self.run_command(*arguments)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(result.stdout, "")
+        self.assert_originals_unchanged()
+
+    def test_conflicting_repeated_years_are_rejected_without_writes(self):
+        self.prepare_history()
+        before = {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()}
+        for years in [("2009", "2012"), ("2024", "2009")]:
+            with self.subTest(years=years):
+                result = self.run_command("--year", years[0], "--year", years[1])
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertEqual(result.stdout, "")
+                self.assertIn("solo año", result.stderr)
+                self.assertEqual(before, {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()})
 
 
 if __name__ == "__main__":

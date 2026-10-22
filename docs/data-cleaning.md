@@ -1,36 +1,56 @@
-# T06: limpieza reproducible de CCPC 2024
+# T06: limpieza reproducible de CCPC 2009–2024
 
-El comando offline valida los originales y produce una tabla **entidad × sexo ×
-tramo de edad**, siguiendo las decisiones de [T04](data-audit.md). No segmenta
-perfiles ni modifica los ZIP o el manifiesto. Los resultados son de uso interno:
-la política de difusión de grupos pequeños sigue pendiente.
+El comando offline valida las seis elecciones y produce una tabla **entidad ×
+sexo × tramo de edad por elección**, siguiendo las reglas de [T04](data-audit.md).
+No mezcla años ni construye historiales individuales. La primera segmentación
+sigue definida para 2024; limpiar la serie histórica no cambia esa decisión.
+No modifica los ZIP ni el manifiesto. Los resultados son de uso interno: la
+política de difusión de grupos pequeños sigue pendiente.
 
 ## Ejecutar desde PowerShell
 
 Con Docker Desktop iniciado y la imagen local de T05 disponible:
 
 ```powershell
-docker compose run --rm --pull never analysis python scripts/clean_ccpc.py
+docker compose run --rm --pull never analysis python scripts/clean_ccpc.py --all-years
 ```
 
-El comando lee `data/sources.json`, verifica el ZIP de 2024 y procesa sus 32 CSV
+El comando lee `data/sources.json`, verifica los seis ZIP y procesa sus **192 CSV**
 por bloques, sin extraerlos. Termina con código **0** y un resumen JSON si todas
-las comprobaciones pasan. Guarda un paquete completo en:
+las comprobaciones pasan. Publica un paquete completo en `data/processed/ccpc_all/`:
 
-- `data/processed/ccpc_2024/table.csv`: tabla analítica.
-- `data/processed/ccpc_2024/report.json`: procedencia, transformaciones, exclusiones,
-  anomalías, comprobaciones y reconciliación de totales.
+- `2009/`, `2012/`, `2015/`, `2018/`, `2021/`, `2024/`: cada carpeta contiene su
+  `table.csv` y `report.json`, con validaciones, exclusiones, transformaciones y
+  reconciliación de totales independientes.
+- `summary.json`: inventario de años, rutas relativas, conteos y totales por año,
+  hash del manifiesto y límites de comparación. No suma poblaciones entre elecciones.
+
+Si falla una elección, **no se publica ninguna carpeta anual parcial** del nuevo
+paquete. Los resultados anteriores se conservan. El ZIP de cada año y el
+manifiesto se comprueban antes y después del procesamiento; al finalizar el lote
+se vuelven a comprobar los seis ZIP y el manifiesto.
+
+Para procesar solo una elección, sin necesitar las fuentes de las otras cinco:
+
+```powershell
+docker compose run --rm --pull never analysis python scripts/clean_ccpc.py --year 2012
+```
+
+Genera `data/processed/ccpc_2012/`. **Sin `--year` ni `--all-years`, se mantiene el
+comportamiento anterior: solo 2024**, con salida en `data/processed/ccpc_2024/`.
 
 Si la carpeta ya existe, el comando falla sin reemplazarla. Para repetir el análisis
 y conservar la ejecución anterior:
 
 ```powershell
-docker compose run --rm --pull never analysis python scripts/clean_ccpc.py --run-name ccpc_2024_repeat
+docker compose run --rm --pull never analysis python scripts/clean_ccpc.py --all-years --run-name ccpc_all_repeat
 ```
 
-Compara los hashes `table_sha256` de ambos reportes. Con los mismos originales,
-código y entorno, los dos archivos deben coincidir byte por byte, incluso usando
-otro tamaño de bloque. Los resultados están excluidos de Git y persisten al
+Compara los hashes `table_sha256` de los reportes de cada año. Con los mismos
+originales, código y entorno, las tablas y reportes deben coincidir byte por byte,
+incluso usando otro tamaño de bloque. El reporte identifica el hash del comando:
+si cambia el código, incluso sus comentarios, ese metadato cambia deliberadamente.
+Los resultados están excluidos de Git y persisten al
 eliminar los contenedores. No los publiques automáticamente.
 
 ### Opciones
@@ -39,7 +59,9 @@ eliminar los contenedores. No los publiques automáticamente.
 | --- | --- |
 | `--help` | Describe el comando sin procesar datos. |
 | `--chunk-size 150000` | Filas por bloque; entero positivo. No cambia las reglas ni los resultados. |
-| `--run-name ccpc_2024` | Nombre de una carpeta nueva dentro de `data/processed/`; solo letras ASCII, números, guion y guion bajo. |
+| `--year AÑO` | Procesa 2009, 2012, 2015, 2018, 2021 o 2024; predeterminado 2024. No se puede combinar con `--all-years` ni seleccionar años distintos repitiendo `--year`. |
+| `--all-years` | Procesa las seis elecciones, con salidas separadas por año y publicación conjunta. |
+| `--run-name NOMBRE` | Carpeta nueva dentro de `data/processed/`; predeterminada `ccpc_AÑO` o `ccpc_all`. Solo letras ASCII, números, guion y guion bajo. |
 | `--root RUTA` | Raíz local alternativa con el mismo esquema `data/sources.json` y `data/raw/`; útil para pruebas aisladas, no descarga fuentes. |
 
 Los errores de argumentos terminan con código **2**; una fuente inválida, un fallo
@@ -54,18 +76,18 @@ descargador ni edites los originales durante el análisis.
 
 | Comprobación o transformación | Tratamiento |
 | --- | --- |
-| Procedencia | Una entrada 2024; tamaño, SHA-256 e inventario ZIP exactos; hashes de ZIP y manifiesto antes y después. No se requieren lecturas de filas de otras elecciones. |
-| Cobertura de archivos | 32 CSV no vacíos, una entidad por CSV, sin entidades repetidas; conjunto de entidades 1–32. No equivale a cobertura poblacional exhaustiva. |
+| Procedencia | Una entrada por elección seleccionada; tamaño, SHA-256 e inventario ZIP exactos; hashes de ZIP y manifiesto antes y después. El modo anual no lee filas de otras elecciones. |
+| Cobertura de archivos | Por año: 32 CSV no vacíos, una entidad por CSV, sin entidades repetidas; conjunto de entidades 1–32. No equivale a cobertura poblacional exhaustiva. |
 | Esquema | Los 16 campos de T04, en el orden documentado; UTF-8 con BOM opcional. No se omiten filas vacías ni se convierten tokens como `NA` automáticamente. |
 | Clave | `(AELEC, EDOCVE, SECCION, SEXO, EDAD)` normalizada; comparación exacta de tuplas, dentro y entre bloques. La exclusividad de entidad entre CSV impide claves compartidas entre archivos. Un duplicado detiene la ejecución. |
-| Identificadores | Enteros normalizados; `EDOCVE` se exporta con dos dígitos, `SEXO` como código categórico. Municipio 1–570, sección positiva, distritos DEF 1–40 y DEL 1–45; no se homologan catálogos externos. |
-| Geografía | Consistencia de nombres de entidad y municipio y de `(entidad, sección) → municipio, tipo, DEF, DEL`. Tipos admitidos: U, M y R. |
+| Identificadores | Enteros normalizados; `EDOCVE` se exporta con dos dígitos, `SEXO` como código categórico. Municipio 1–570, sección positiva, DEF 1–41 en 2009–2021 y 1–40 en 2024; DEL 1–45. No se homologan catálogos externos. |
+| Geografía | Por elección, consistencia de nombres y de `(entidad, sección) → municipio, tipo, DEF, DEL`. Tipos U, M y R. No se exige que una sección tenga los mismos atributos en años distintos. |
 | Conteos | `LN` positivo; `SV`, `NV`, `NS` enteros no negativos; `LN = SV + NV + NS`. Se aceptan representaciones enteras con espacios externos, no fracciones ni negativos. |
 | Faltantes y supresión | Blancos distritales → faltante, nunca cero; conteos blancos → error. Tokens desconocidos → error por posible supresión no documentada, nunca imputación o reconstrucción. `NS` no se interpreta como supresión. |
-| Edad y sexo | Edad mínima 18; tramos 18–24, 25–34, 35–44, 45–59, 60+. Se conserva sexo 2. Las edades mayores de 110 se conservan, se señalan y aportan conteos separados para sensibilidad posterior. |
+| Edad y sexo | Edad mínima 18; tramos 18–24, 25–34, 35–44, 45–59, 60+. Sexo 0/1 en 2009–2021 y 0/1/2 en 2024. No se inventa sexo 2 en años anteriores ni se rellena su ausencia con ceros. Las edades mayores de 110 se conservan y aportan conteos separados para sensibilidad. |
 | Agregación | Solo combinaciones observadas. Se suman conteos antes de calcular tasas; no se promedian porcentajes de filas. Se conserva población con participación desconocida. |
 | Tasas | Participación `100×SV/(SV+NV)`, abstención `100×NV/(SV+NV)`, no especificación `100×NS/LN`, cobertura conocida `100×(SV+NV)/LN`. Denominador conocido cero → tasas de participación/abstención vacías, no cero. |
-| Fechas | Se selecciona por `AELEC=2024` y se conservan los literales de `FELECCION` en el reporte, sin interpretar `06/02/2024`. |
+| Fechas | Se exige `AELEC` igual al año seleccionado; se conservan los literales de `FELECCION`, sin una regla global de interpretación. |
 | Totales y exclusiones | Reconciliación exacta de los cuatro conteos entre fuente y tabla; no se excluyen silenciosamente filas inválidas. Cero exclusiones en una ejecución válida, incluidas edades extremas. |
 
 La tabla incluye claves, conteos, filas fuente contribuyentes, denominador conocido,
@@ -125,6 +147,54 @@ tamaños de bloque. No descargan datos ni necesitan las fuentes reales:
 docker compose run --rm --pull never analysis python -B -m unittest discover -s tests -p test_clean_ccpc.py -v
 docker compose run --rm --pull never analysis python -B -m unittest discover -s tests -v
 ```
+
+## Ampliación multianual · 22 de octubre de 2026
+
+Se añadieron `--year` y `--all-years` después de observar pruebas RED por ausencia
+de ambas opciones. La suite completa ampliada en Docker terminó con **29 pruebas:
+28 aprobadas y 1 omisión esperada** de la prueba opcional de persistencia desde el
+anfitrión. Incluye selección de los seis años, dominios históricos, fechas literales,
+separación anual, reproducibilidad, rechazo de sobrescritura y ausencia de resultados
+parciales si falla el último año. También conserva las pruebas originales de 2024.
+La primera ejecución focalizada excedió 180 segundos; sus casos terminaron aprobados
+en la suite completa posterior, con un límite de tiempo mayor.
+La verificación independiente detectó que repetir `--year` con años distintos
+ignoraba el primero. Se añadió una regresión RED y se corrigió el analizador para
+rechazar ese caso con código 2 antes de escribir archivos. Después aprobaron
+**3 pruebas focalizadas**: el rechazo de años contradictorios, la compatibilidad
+del modo 2024 y las opciones, y el lote multianual reproducible. No se repitió la
+suite completa ni el barrido real tras esta corrección exclusiva de argumentos;
+los reportes conservan el hash de la versión que produjo los datos.
+La revalidación independiente de esa corrección aprobó 14 ejecuciones acotadas
+del comando público: rechazo sin escrituras, modos anual y multianual y
+compatibilidad con la versión anterior de 2024. No quedaron bloqueos de la
+verificación independiente; los casos no afectados conservaron su dictamen inicial.
+
+La ejecución real de `--all-years` terminó correctamente y validó **54.872.712
+filas en 192 CSV**, con **1.956 grupos analíticos** y cero exclusiones:
+
+| Elección | Filas fuente | Grupos analíticos |
+| --- | ---: | ---: |
+| 2009 | 8.706.843 | 320 |
+| 2012 | 8.604.456 | 320 |
+| 2015 | 9.106.059 | 320 |
+| 2018 | 9.251.122 | 320 |
+| 2021 | 9.430.502 | 320 |
+| 2024 | 9.773.730 | 356 |
+
+Los cuatro totales de cada año coincidieron con T04 y con su tabla analítica;
+todas las comprobaciones de los seis reportes resultaron aprobadas. La tabla
+2024 del lote coincide **byte por byte** con la tabla previa de 2024. El reporte
+identifica la nueva versión del comando mediante su hash, por lo que no se exige
+que ese metadato coincida con el de una versión anterior del código.
+El paquete completo y su resumen se conservan en `data/processed/ccpc_all/`.
+El procesamiento superó los 15 minutos del primer límite de espera: se retomó
+la conexión al mismo contenedor activo y terminó sin reiniciar ni duplicar la ejecución.
+
+La serie limpia no demuestra comparabilidad automática: distinguir 2009/2015/2021
+de 2012/2018/2024 y considerar los cambios de cartografía, cobertura y categorías
+documentados en T04. No se ha realizado una segmentación histórica ni una
+homologación territorial entre elecciones.
 
 La reproducción integrada del análisis final y de los entregables sigue siendo
 T14; la selección de 4–6 perfiles y la evaluación de estabilidad corresponden a T07.

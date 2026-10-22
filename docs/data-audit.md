@@ -172,7 +172,8 @@ poblacional exhaustiva, equivalencia longitudinal ni una garantía de anonimizac
 
 **T04 queda documentada:** matriz, unidad, denominadores, faltantes, supresión no
 documentada y límites temporales. **Actualización T06, 22 de octubre:** el
-[pipeline reproducible de 2024](data-cleaning.md) implementa estas validaciones,
-preserva y señala las anomalías y exporta la tabla analítica y su reporte.
-La ejecución completa reprodujo los totales de 2024 sin modificar originales.
+[pipeline reproducible](data-cleaning.md) admite las seis elecciones con reglas
+por año y exportaciones separadas. La ejecución de los 192 CSV reprodujo los
+totales de las seis elecciones sin modificar originales. La ampliación histórica no cambia la selección
+inicial de 2024 para perfiles ni acredita comparabilidad temporal automática.
 Consultar el [inventario de T03](data-sources.md) para las URL y diccionarios exactos.
