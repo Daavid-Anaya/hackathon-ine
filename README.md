@@ -46,8 +46,19 @@ y la reconstrucción de la imagen.
 
 Los ZIP/PDF originales y el entorno de ejecución quedan fuera de Git. La procedencia
 de los archivos se registra en el [manifiesto de fuentes](data/sources.json), generado
-por el descargador. Todavía no se han implementado la limpieza, la segmentación,
-una interfaz ni un despliegue.
+por el descargador. La [limpieza reproducible de T06](docs/data-cleaning.md) valida
+las seis elecciones y genera tablas y reportes separados por año sin modificar originales:
+
+```powershell
+docker compose run --rm --pull never analysis python scripts/clean_ccpc.py --all-years
+```
+
+La salida nueva se guarda en `data/processed/ccpc_all/`, con carpetas por año y un
+`summary.json`; si ya existe, utiliza otro `--run-name`, sin sobrescribirla.
+`--year 2012` procesa solo ese año; sin seleccionar un modo se conserva el valor
+predeterminado anterior de 2024. Los resultados son internos hasta revisar
+la política de difusión de grupos pequeños. Todavía no se han implementado la
+segmentación, una interfaz ni un despliegue.
 
 ## Documentos del proyecto
 
@@ -55,4 +66,5 @@ una interfaz ni un despliegue.
 - [Índice inicial del documento técnico (T05 → T11)](docs/technical-report-outline.md)
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
+- [Limpieza, validaciones y tabla analítica de T06](docs/data-cleaning.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
