@@ -33,7 +33,7 @@ Las dependencias condicionan el cierre: se pueden preparar plantillas, índice y
 
 | ID | Tarea y criterio de cierre | Depende de | Responsable | Estado |
 | :--- | :--- | :--- | :--- | :--- |
-| T06 | Implementar limpieza reproducible sin sobrescribir originales. Validar claves, duplicados, rangos, denominadores y consistencia de totales; distinguir cero, faltante y dato suprimido. Cierre: tabla analítica y reporte de exclusiones, transformaciones y comprobaciones. | T04, T05 | Por asignar | Pendiente |
+| T06 | Implementar limpieza reproducible sin sobrescribir originales. Validar claves, duplicados, rangos, denominadores y consistencia de totales; distinguir cero, faltante y dato suprimido. Cierre: tabla analítica y reporte de exclusiones, transformaciones y comprobaciones. Evidencia: [comando, reglas y ejecución completa del 22 de octubre](data-cleaning.md); tabla y reporte locales en `data/processed/ccpc_2024/`. | T04, T05 | Por asignar | Completada |
 | T07 | Comparar soluciones de segmentación candidatas para 4, 5 y 6 perfiles. Justificar variables, escalado, ponderaciones y método; fijar semillas cuando corresponda. Evaluar separación, estabilidad ante cambios razonables, tamaños e interpretabilidad. Cierre: comparación documentada, no solo ejecución del algoritmo. | T06 | Por asignar | Pendiente |
 | T08 | Seleccionar la solución y exportar resultados agregados con identificadores y métricas trazables. Cierre: 4 a 6 perfiles diferenciados y limitaciones explícitas. Si no hay una solución defendible, revisar variables o método y registrar el bloqueo; no inventar diferencias para cumplir el número. | T07 | Por asignar | Pendiente |
 

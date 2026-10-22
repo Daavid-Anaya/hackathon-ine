@@ -3,8 +3,9 @@
 **Decisión:** trabajar con conteos agregados, no con personas ni historiales.
 La unidad analítica inicial será **entidad × sexo × tramo de edad en 2024**.
 La auditoría del 21 de octubre de 2026 cubrió los **192 CSV completos** de las
-seis elecciones: **54.872.712 filas**. Esta definición prepara T06; todavía no
-se ha generado una tabla limpia ni ejecutado una segmentación.
+seis elecciones: **54.872.712 filas**. Al cerrar T04 no se había generado una tabla
+limpia ni ejecutado una segmentación. La implementación posterior de limpieza se
+documenta en [T06](data-cleaning.md).
 
 ## Qué representa una fila
 
@@ -162,16 +163,16 @@ blancos, enteros, sumas, identidad contable, denominadores, claves candidatas y
 dependencias geográficas dentro de cada año. Los seis SHA-256 coincidieron con el
 [manifiesto](../data/sources.json) antes y después del procesamiento.
 
-La inspección se ejecutó con código en memoria; **todavía no existe un comando de
-auditoría de filas versionado**. La tabla anterior es evidencia del barrido realizado,
-no una prueba automatizada de regresión. T06 deberá convertir estas comprobaciones
-en validaciones reproducibles de la tabla limpia. El comando `download_ccpc.py
+La inspección de T04 se ejecutó con código en memoria; **al cerrar T04 no existía
+un comando de auditoría de filas versionado**. La tabla anterior es evidencia del
+barrido realizado, no una prueba automatizada de regresión. El comando `download_ccpc.py
 --inspect` solo verifica integridad, diccionarios y primeros encabezados: no reproduce
 esta auditoría de filas. No se validaron catálogos territoriales externos, cobertura
 poblacional exhaustiva, equivalencia longitudinal ni una garantía de anonimización.
 
 **T04 queda documentada:** matriz, unidad, denominadores, faltantes, supresión no
-documentada y límites temporales. **T06 sigue pendiente:** implementar limpieza y
-validaciones reproducibles, resolver el tratamiento de anomalías sin perder la
-trazabilidad y exportar solo la tabla analítica y su reporte de transformaciones.
+documentada y límites temporales. **Actualización T06, 22 de octubre:** el
+[pipeline reproducible de 2024](data-cleaning.md) implementa estas validaciones,
+preserva y señala las anomalías y exporta la tabla analítica y su reporte.
+La ejecución completa reprodujo los totales de 2024 sin modificar originales.
 Consultar el [inventario de T03](data-sources.md) para las URL y diccionarios exactos.

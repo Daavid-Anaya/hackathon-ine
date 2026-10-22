@@ -136,6 +136,16 @@ de archivos Linux de WSL. Mover el repositorio es opcional y no forma parte de e
 
 ## Descargar o verificar las fuentes
 
+Para limpiar las fuentes ya disponibles, utiliza el [comando offline de T06](data-cleaning.md):
+
+```powershell
+docker compose run --rm --pull never analysis python scripts/clean_ccpc.py
+```
+
+Genera `data/processed/ccpc_2024/table.csv` y `report.json` después de validar
+todos los CSV de 2024. No sobrescribe ejecuciones previas ni modifica originales.
+Consulta la guía enlazada para repetir con otro nombre y entender las comprobaciones.
+
 Inspecciona las fuentes ya descargadas sin conexión y sin permisos de escritura:
 
 ```powershell
