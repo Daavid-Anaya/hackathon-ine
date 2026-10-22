@@ -64,6 +64,43 @@ try {
 Esta prueba exclusiva del equipo anfitrión se omite en la ejecución habitual
 de pruebas y dentro de los contenedores.
 
+### Verificación registrada de T05 · 21 de octubre de 2026
+
+Se comprobó el entorno con Docker Desktop en Windows, mediante el contexto local
+`desktop-linux`. Se utilizó la imagen existente `hackathon-ine-python:local`, sin
+reconstruirla ni descargar paquetes o fuentes. Docker cliente y motor reportaron
+**29.9.2**; Docker Compose, **v5.6.0**.
+
+| Componente | Versión instalada en el contenedor |
+| --- | --- |
+| Python | 3.12.10 |
+| Pandas | 3.0.6 |
+| Scikit-learn | 1.9.1 |
+| NumPy | 2.5.4 |
+
+Las versiones se obtuvieron del comprobador, no solo del archivo de dependencias.
+La prueba de versiones instaladas confirmó los paquetes fijados en
+`requirements.txt`. Comandos ejecutados y resultados observados:
+
+| Comando | Resultado |
+| --- | --- |
+| `docker compose config --quiet` | Código 0: configuración válida |
+| `docker compose run --rm --pull never analysis` | Código 0; JSON con `"smoke_test": "ok"` |
+| `docker compose run --rm --pull never analysis python -m pip check` | Código 0; `No broken requirements found.` |
+| `docker compose run --rm --pull never analysis python -m unittest discover -s tests -v` | Código 0; 16 pruebas: 15 aprobadas y 1 omitida por ejecutarse desde el contenedor |
+| Prueba opcional del anfitrión indicada arriba, con `RUN_DOCKER_HOST_PROBES=1` | Código 0; 1 prueba aprobada |
+
+La prueba opcional cubrió por separado la omisión esperada de la suite:
+los resultados sintéticos persistieron entre contenedores eliminados y los
+originales sintéticos conservaron sus hashes después de rechazar escrituras.
+También se verificaron la ejecución sin root y los montajes de solo lectura.
+Las pruebas utilizaron archivos temporales y descargas simuladas; no ejecutaron
+la limpieza, la segmentación ni una descarga de las fuentes reales.
+
+Esta evidencia acredita el entorno de T05, no la reproducción del análisis final
+de T14. El [índice inicial del documento técnico](technical-report-outline.md)
+queda preparado para completarse en T11, sin resultados inventados.
+
 ### Trabajar de forma interactiva o ejecutar scripts
 
 ```powershell
@@ -168,8 +205,9 @@ metadatos de Git, los resultados y otros archivos ajenos al entorno. No publique
 la imagen local ni subas datos como parte del desarrollo habitual.
 
 No publiques datos personales, credenciales ni cartas administrativas firmadas.
-T04 debe validar la unidad de observación y la agregación permitida antes de
-iniciar la limpieza o la segmentación.
+La [auditoría de T04](data-audit.md) documenta la unidad de observación y la
+agregación permitida. La limpieza de T06 debe respetar esas decisiones antes
+de iniciar la segmentación.
 
 Los cambios de dependencias son tareas deliberadas de mantenimiento, no pasos
 de ejecución habitual. Edita `requirements.in` y regenera `requirements.txt`

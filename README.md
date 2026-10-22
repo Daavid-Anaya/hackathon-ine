@@ -52,6 +52,7 @@ una interfaz ni un despliegue.
 ## Documentos del proyecto
 
 - [Configuración y ejecución local](docs/local-setup.md)
+- [Índice inicial del documento técnico (T05 → T11)](docs/technical-report-outline.md)
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
