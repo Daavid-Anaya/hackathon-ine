@@ -1,8 +1,8 @@
 # Índice del informe técnico — Reto 1
 
 Estructura inicial de T05 que se completará en T11. No es el informe final:
-ya existe una comparación de segmentaciones en T07, pero todavía no hay perfiles
-finales seleccionados ni efectos demostrados de las estrategias. La entrega final debe seguir la
+ya existe una comparación de segmentaciones en T07 y una selección numérica en
+T08, pero todavía faltan las narrativas T09 y no hay efectos demostrados de las estrategias. La entrega final debe seguir la
 convocatoria: **8–12 páginas, Arial/Calibri 11 e interlineado de 1.5**,
 con 4–6 perfiles sustentados en evidencia.
 
@@ -12,7 +12,7 @@ con 4–6 perfiles sustentados en evidencia.
 | 2. Fuentes y población de análisis | Procedencia, cobertura, exclusiones, unidad de observación y límites geográficos y temporales | Inventario T03; auditoría T04 |
 | 3. Preparación de los datos | Claves, duplicados, valores faltantes o suprimidos, denominadores, transformaciones y exclusiones | T04, T06 |
 | 4. Metodología de segmentación | Justificación de variables, escalado, ponderación, métodos candidatos y semillas aleatorias | [Comparación T07](segmentation-comparison.md) |
-| 5. Validación y selección | Comparación de 4, 5 y 6 perfiles; separación, estabilidad, tamaño, interpretabilidad y robustez histórica por serie; selección final pendiente | [Comparación T07](segmentation-comparison.md), [extensión histórica](historical-robustness.md), T08 |
+| 5. Validación y selección | Comparación de 4, 5 y 6 perfiles; selección de cinco perfiles de 2024; separación, estabilidad, tamaño y contexto de seis elecciones con referencias por serie | [Comparación T07](segmentation-comparison.md), [extensión histórica](historical-robustness.md), [selección T08](profile-selection.md) |
 | 6. Perfiles ciudadanos | 4–6 descripciones sustentadas en evidencia, tamaños e incertidumbre; sin inferencias individuales | T08, T09 |
 | 7. Estrategias institucionales diferenciadas | Evidencia, barrera hipotética, acción, canal, recursos e indicador de evaluación | T10 |
 | 8. Supuestos, limitaciones y salvaguardas | Límites de inferencia ecológica, comparabilidad, incertidumbre, privacidad y viabilidad | T04–T10 |

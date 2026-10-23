@@ -70,7 +70,7 @@ Genera `report.json` y `comparison.csv` en `outputs/t07_comparison/`, sin
 sobrescribir ejecuciones anteriores (`--run-name` permite otra carpeta). Incluye
 semillas, sensibilidad a variables, ponderaciones, elegibilidad y edades extremas,
 tamaños, composición y estabilidad al retirar entidades. No mezcla elecciones
-ni exporta asignaciones finales: la selección de perfiles sigue pendiente en T08.
+ni exporta asignaciones finales: esa selección se realiza con el comando T08.
 Todavía no se han implementado una interfaz ni un despliegue.
 
 La [extensión histórica de T07](docs/historical-robustness.md) compara las seis
@@ -84,6 +84,20 @@ docker compose run --rm --pull never analysis python -B scripts/compare_history.
 La nueva salida es `outputs/t07_history/`. Conserva el comando de 2024 y sus
 resultados anteriores; la referencia histórica no representa trayectorias de personas.
 
+La [selección y exportación T08](docs/profile-selection.md) utiliza cinco perfiles
+centrales de 2024 y conserva el contexto de las seis elecciones, incluidos los
+candidatos anuales y las referencias históricas de 4, 5 y 6 bandas:
+
+```powershell
+docker compose run --rm --pull never analysis python -B scripts/export_profiles.py
+```
+
+Genera nueve archivos en `outputs/t08_profiles/`: perfiles, asignaciones centrales
+e históricas, métricas, exclusiones y evidencia con hashes. `--run-name` permite
+otra ejecución sin sobrescribir. Las salidas son internas y requieren revisión
+de divulgación antes de publicarse; no son historiales de personas. Los nombres
+y descripciones se desarrollarán en T09 y las estrategias en T10.
+
 ## Documentos del proyecto
 
 - [Configuración y ejecución local](docs/local-setup.md)
@@ -93,4 +107,5 @@ resultados anteriores; la referencia histórica no representa trayectorias de pe
 - [Limpieza, validaciones y tabla analítica de T06](docs/data-cleaning.md)
 - [Comparación de segmentación y limitaciones de T07](docs/segmentation-comparison.md)
 - [Robustez histórica y referencias por serie electoral](docs/historical-robustness.md)
+- [Selección de perfiles y exportaciones trazables T08](docs/profile-selection.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
