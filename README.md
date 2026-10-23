@@ -98,6 +98,18 @@ otra ejecución sin sobrescribir. Las salidas son internas y requieren revisión
 de divulgación antes de publicarse; no son historiales de personas. Los nombres
 y descripciones se desarrollarán en T09 y las estrategias en T10.
 
+Para preparar una **vista reducida pendiente de revisión**, sin modificar T08 ni
+autorizar publicación:
+
+```powershell
+docker compose run --rm --pull never analysis python -B scripts/prepare_disclosure_summary.py
+```
+
+La [revisión de divulgación](docs/disclosure-review.md) documenta los campos y
+precisión de `outputs/t08_disclosure_summary/`. No contiene asignaciones ni
+conteos exactos, no sustituye la evidencia interna y no debe compartirse
+automáticamente: la revisión final de materiales y canales corresponde a T14–T15.
+
 ## Documentos del proyecto
 
 - [Configuración y ejecución local](docs/local-setup.md)
@@ -108,4 +120,5 @@ y descripciones se desarrollarán en T09 y las estrategias en T10.
 - [Comparación de segmentación y limitaciones de T07](docs/segmentation-comparison.md)
 - [Robustez histórica y referencias por serie electoral](docs/historical-robustness.md)
 - [Selección de perfiles y exportaciones trazables T08](docs/profile-selection.md)
+- [Revisión de divulgación y borrador de resúmenes](docs/disclosure-review.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
