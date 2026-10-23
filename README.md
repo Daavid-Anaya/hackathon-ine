@@ -57,8 +57,32 @@ La salida nueva se guarda en `data/processed/ccpc_all/`, con carpetas por año y
 `summary.json`; si ya existe, utiliza otro `--run-name`, sin sobrescribirla.
 `--year 2012` procesa solo ese año; sin seleccionar un modo se conserva el valor
 predeterminado anterior de 2024. Los resultados son internos hasta revisar
-la política de difusión de grupos pequeños. Todavía no se han implementado la
-segmentación, una interfaz ni un despliegue.
+la política de difusión de grupos pequeños.
+
+La [comparación de segmentación de T07](docs/segmentation-comparison.md) evalúa
+K-means y Ward para 4, 5 y 6 segmentos sobre los grupos agregados de **2024**:
+
+```powershell
+docker compose run --rm --pull never analysis python -B scripts/compare_segments.py
+```
+
+Genera `report.json` y `comparison.csv` en `outputs/t07_comparison/`, sin
+sobrescribir ejecuciones anteriores (`--run-name` permite otra carpeta). Incluye
+semillas, sensibilidad a variables, ponderaciones, elegibilidad y edades extremas,
+tamaños, composición y estabilidad al retirar entidades. No mezcla elecciones
+ni exporta asignaciones finales: la selección de perfiles sigue pendiente en T08.
+Todavía no se han implementado una interfaz ni un despliegue.
+
+La [extensión histórica de T07](docs/historical-robustness.md) compara las seis
+elecciones por separado y usa referencias fijas dentro de las series
+2012/2018/2024 y 2009/2015/2021, sin sumar poblaciones entre elecciones:
+
+```powershell
+docker compose run --rm --pull never analysis python -B scripts/compare_history.py
+```
+
+La nueva salida es `outputs/t07_history/`. Conserva el comando de 2024 y sus
+resultados anteriores; la referencia histórica no representa trayectorias de personas.
 
 ## Documentos del proyecto
 
@@ -67,4 +91,6 @@ segmentación, una interfaz ni un despliegue.
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
 - [Limpieza, validaciones y tabla analítica de T06](docs/data-cleaning.md)
+- [Comparación de segmentación y limitaciones de T07](docs/segmentation-comparison.md)
+- [Robustez histórica y referencias por serie electoral](docs/historical-robustness.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
