@@ -6,10 +6,6 @@ resultados históricos de **2009, 2012, 2015, 2018, 2021 y 2024**, sin sumar sus
 poblaciones ni imponer un número óptimo universal de conglomerados. Las salidas
 son **internas**, no una publicación autorizada de grupos pequeños.
 
-Existe una [vista reducida separada para revisión de divulgación](disclosure-review.md).
-No modifica este paquete ni autoriza su publicación; los archivos completos
-siguen siendo evidencia interna.
-
 ## Ejecución
 
 Con los seis paquetes T06 y la comparación histórica T07 disponibles:
