@@ -59,22 +59,22 @@ STRATEGIES = (
 CSS = """
 @page { size: letter portrait; margin: 12mm; }
 * { box-sizing: border-box; }
-body { margin: 0; color: #243247; background: #edf0f4; font: 13.4px/1.38 Arial, sans-serif; }
+body { margin: 0; color: #383b7e; background: #d1bdef; font: 13.4px/1.38 Arial, sans-serif; }
 .sheet { width: 192mm; margin: 20px auto; padding: 0; background: #fff; }
-header { border-top: 6px solid #8f1434; border-bottom: 1px solid #b9c2d0; padding: 12px 0; }
-.eyebrow { color: #8f1434; font-weight: bold; letter-spacing: .5px; font-size: 12px; }
+header { border-top: 6px solid #674092; border-bottom: 1px solid #9680b4; padding: 12px 0; }
+.eyebrow { color: #674092; font-weight: bold; letter-spacing: .5px; font-size: 12px; }
 h1 { font: bold 27px/1.1 Georgia, serif; margin: 6px 0; }
-h2 { font-size: 14px; margin: 12px 0 6px; color: #8f1434; }
+h2 { font-size: 14px; margin: 12px 0 6px; color: #49276f; }
 p { margin: 5px 0; }
 .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0; }
-.kpi { border-left: 3px solid #8f1434; padding-left: 8px; font-size: 12px; }
+.kpi { border-left: 3px solid #674092; padding-left: 8px; font-size: 12px; }
 .value { display: block; font-size: 23px; font-weight: bold; font-variant-numeric: tabular-nums; }
 .charts { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; }
 .chart { margin: 0; }
 svg { display: block; width: 100%; }
-.strategy { background: #f0f5fa; padding: 10px 12px; border-left: 3px solid #235886; }
-.limits { border-top: 1px solid #b9c2d0; margin-top: 10px; padding-top: 6px; font-size: 11.4px; }
-footer { margin-top: 8px; color: #415269; font-size: 10.8px; overflow-wrap: anywhere; }
+.strategy { background: #d1bdef; padding: 10px 12px; border-left: 3px solid #674092; }
+.limits { border-top: 1px solid #a6a8aa; margin-top: 10px; padding-top: 6px; font-size: 11.4px; }
+footer { margin-top: 8px; color: #383b7e; font-size: 10.8px; overflow-wrap: anywhere; }
 .small { font-size: 11.5px; }
 @media print {
  body { background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -174,10 +174,10 @@ def bars(title, values):
     for index, (label, value) in enumerate(values):
         y = index * 26 + 5
         parts.extend((
-            f'<text x="0" y="{y + 14}" font-size="13" fill="#243247">{escape(label)}</text>',
-            f'<rect x="85" y="{y}" width="190" height="18" fill="#e6eaf0"/>',
-            f'<rect x="85" y="{y}" width="{1.9 * value:.3f}" height="18" fill="#8f1434"/>',
-            f'<text x="284" y="{y + 14}" font-size="13" fill="#243247">{value:.1f}%</text>',
+            f'<text x="0" y="{y + 14}" font-size="13" fill="#383b7e">{escape(label)}</text>',
+            f'<rect x="85" y="{y}" width="190" height="18" fill="#d1bdef"/>',
+            f'<rect x="85" y="{y}" width="{1.9 * value:.3f}" height="18" fill="#674092"/>',
+            f'<text x="284" y="{y + 14}" font-size="13" fill="#383b7e">{value:.1f}%</text>',
         ))
     return "\n".join(parts) + "</svg>"
 

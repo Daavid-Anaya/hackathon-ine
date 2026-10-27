@@ -37,6 +37,33 @@ desconocidas. No modifica las entradas ni recalcula la segmentación.
 
 ## Formato y comprobaciones
 
+### Paleta lila elegida para las fichas
+
+Por decisión del proyecto se utiliza la paleta del [Manual de Identidad del INE
+del 9 de septiembre de 2026, sección 2.3, páginas 11–12](https://repositoriodocumental.ine.mx/xmlui/bitstream/handle/123456789/190007/JGE2ex202609-09-ap-1-1-a.pdf).
+Es una referencia histórica elegida para este diseño, Esta adaptación no implica aval institucional ni autoriza utilizar logotipos oficiales.
+
+| Aplicación | Color | HEX |
+| --- | --- | --- |
+| Pleca, indicadores y barras | Lila institucional | `#674092` |
+| Encabezados de sección | Lila oscuro | `#49276F` |
+| Texto y etiquetas | Azul | `#383B7E` |
+| Fondo de estrategia y barras | Lila claro | `#D1BDEF` |
+| Separador del encabezado | Lila | `#9680B4` |
+| Separadores secundarios | Gris | `#A6A8AA` |
+| Página impresa | Blanco | `#FFFFFF` |
+
+Los textos usan tonos oscuros; los lilas claros no se usan como texto sobre
+blanco. La regresión comprueba contraste de al menos 4.5:1 en los pares de texto
+y 3:1 en las barras. El contenido numérico, la tipografía y la geometría no cambian.
+Para exportar esta revisión sin sobrescribir el conjunto anterior:
+
+```powershell
+python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards_lila
+```
+
+### Productos
+
 | Producto | Especificación elegida |
 | --- | --- |
 | Cinco PDF individuales | Carta vertical, 612 × 792 pt (215.9 × 279.4 mm), una página por perfil, márgenes de 12 mm |
@@ -92,6 +119,14 @@ incluyas fichas, conteos reales ni capturas de los perfiles en commits o PR sin
 la revisión de divulgación correspondiente.
 
 ## Evidencia local de esta implementación
+
+La revisión cromática lila se exportó en `outputs/t12_profile_cards_lila/` y se
+inspeccionaron visualmente sus cinco PNG. Las ocho pruebas T12 pasan, incluida
+la regresión de paleta/contraste y la exportación real. La comparación con la
+versión anterior confirma texto PDF, cifras, geometría y salidas de la CLI sin
+cambios; únicamente se modificó la presentación cromática. Los archivos anteriores
+se conservan intactos. El nuevo conjunto mantiene cinco PDF individuales y un
+cuaderno de cinco páginas, PNG a 300 dpi y fuente mínima de 8.1 pt.
 
 Se generó `outputs/t12_profile_cards_final/` con cinco PDF de una página, cinco
 PNG de 2550 × 3300 px a 300 dpi y el cuaderno PDF de cinco páginas. Se revisaron

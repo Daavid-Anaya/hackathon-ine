@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -102,6 +103,43 @@ class ProfileCardTests(unittest.TestCase):
         self.assertEqual(repeat.returncode, 0, repeat.stderr)
         for path in (self.root / "cards").iterdir():
             self.assertEqual(path.read_bytes(), (self.root / "repeat" / path.name).read_bytes())
+
+    def test_lilac_palette_and_readable_text_in_all_cards_and_notebook(self):
+        result = self.run_command("--html-only")
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+        palette = {"#383b7e", "#674092", "#9680b4", "#49276f",
+                   "#d1bdef", "#a6a8aa", "#000000", "#ffffff"}
+
+        def luminance(colour):
+            rgb = [int(colour[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            linear = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+                      for v in rgb]
+            return sum(v * w for v, w in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+        for path in sorted((self.root / "cards").glob("*.html")):
+            with self.subTest(file=path.name):
+                text = path.read_text(encoding="utf-8").lower()
+                colours = set(re.findall(r"#[0-9a-f]{6}\b|#[0-9a-f]{3}\b", text))
+                colours = {"#" + "".join(c * 2 for c in colour[1:])
+                           if len(colour) == 4 else colour for colour in colours}
+                self.assertTrue(colours <= palette, colours - palette)
+                self.assertTrue({"#674092", "#49276f", "#383b7e", "#d1bdef"} <= colours)
+                self.assertIn('fill="#674092"', text)
+                self.assertIn('fill="#383b7e"', text)
+                styles = dict(re.findall(r"(body|h2|\.eyebrow|footer|\.strategy)\s*\{([^}]+)\}",
+                                         text.split("@media print")[0]))
+                body_colour = re.search(r"\bcolor:\s*(#[0-9a-f]{6})", styles["body"])[1]
+                strategy_background = re.search(r"background:\s*(#[0-9a-f]{6})", styles[".strategy"])[1]
+                pairs = [(body_colour, "#ffffff"), (body_colour, strategy_background)]
+                pairs.extend((re.search(r"\bcolor:\s*(#[0-9a-f]{6})", styles[key])[1], "#ffffff")
+                             for key in ("h2", ".eyebrow", "footer"))
+                for foreground, background in pairs:
+                    light, dark = sorted((luminance(foreground), luminance(background)), reverse=True)
+                    self.assertGreaterEqual((light + 0.05) / (dark + 0.05), 4.5)
+                light, dark = sorted((luminance("#674092"), luminance("#d1bdef")), reverse=True)
+                self.assertGreaterEqual((light + 0.05) / (dark + 0.05), 3)
+        for name, content in self.before.items():
+            self.assertEqual((self.root / name).read_bytes(), content)
 
     def test_invalid_inputs_fail_without_partial_output(self):
         original = self.profiles.read_bytes()
