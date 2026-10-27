@@ -3,8 +3,9 @@
 Estructura inicial de T05 que se completará en T11. No es el informe final:
 ya existe una comparación de segmentaciones en T07 y una selección numérica en
 T08 y un [borrador interno de narrativas T09](profile-interpretation.md), pendiente
-de revisión de divulgación e integración; no hay efectos demostrados de las
-estrategias. La entrega final debe seguir la
+de revisión de divulgación e integración, y un [borrador general T10](institutional-proposals.md)
+de información y accesibilidad. No hay efectos demostrados de las propuestas.
+La entrega final debe seguir la
 convocatoria: **8–12 páginas, Arial/Calibri 11 e interlineado de 1.5**,
 con 4–6 perfiles sustentados en evidencia.
 
@@ -15,10 +16,18 @@ con 4–6 perfiles sustentados en evidencia.
 | 3. Preparación de los datos | Claves, duplicados, valores faltantes o suprimidos, denominadores, transformaciones y exclusiones | T04, T06 |
 | 4. Metodología de segmentación | Justificación de variables, escalado, ponderación, métodos candidatos y semillas aleatorias | [Comparación T07](segmentation-comparison.md) |
 | 5. Validación y selección | Comparación de 4, 5 y 6 perfiles; selección de cinco perfiles de 2024; separación, estabilidad, tamaño y contexto de seis elecciones con referencias por serie | [Comparación T07](segmentation-comparison.md), [extensión histórica](historical-robustness.md), [selección T08](profile-selection.md) |
-| 6. Perfiles ciudadanos | Cinco descripciones internas de 2024 con tamaños, composición y límites; integrar solo la versión revisada para sus destinatarios, sin inferencias individuales | [T08](profile-selection.md), [guía T09 y ubicación local](profile-interpretation.md) |
-| 7. Estrategias institucionales diferenciadas | Evidencia, barrera hipotética, acción, canal, recursos e indicador de evaluación | T10 |
+| 6. Perfiles ciudadanos | Cinco descripciones internas de 2024 con tamaños, composición por edad y sexo, distribución entre entidades, TIPOSEC como descriptor y comparación con el conjunto elegible; integrar solo la versión revisada para sus destinatarios, sin inferencias individuales | [T08](profile-selection.md), [guía T09 y ubicación local](profile-interpretation.md) |
+| 7. Estrategias institucionales diferenciadas y transversales | Cinco estrategias operativas diferenciadas por perfil (E01–E05) con evidencia, barrera hipotética, acción, canal, recursos e indicador de servicio, más salvaguardas generales (G01–G03) | [Propuestas T10](institutional-proposals.md) |
 | 8. Supuestos, limitaciones y salvaguardas | Límites de inferencia ecológica, comparabilidad, incertidumbre, privacidad y viabilidad | T04–T10 |
 | 9. Conclusiones y referencias | Hallazgos sustentados, instrucciones de reproducción y referencias a las fuentes | T11, T14 |
+
+El [diagnóstico urbano–mixto–rural de 2024](section-type-diagnostic.md) aporta una
+comparación territorial complementaria para las secciones 6 y 8. No modifica los
+perfiles ni establece un efecto causal o una clasificación municipal.
+
+El [cruce P01–P05 con tipo de sección](profile-section-cross.md) añade contexto
+descriptivo dentro de los perfiles fijos, con comparación de composición propia
+por perfil. No constituye una selección nueva ni decide reemplazar T08.
 
 Utiliza el [inventario de fuentes](data-sources.md) y la [guía de ejecución
 local](local-setup.md) como material de apoyo. Las tablas y figuras deben ser

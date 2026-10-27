@@ -20,6 +20,8 @@ ejecución inicial `outputs/t08_profiles/` ni se altera la evidencia T08.
 | --- | --- |
 | `outputs/t08_profiles_final/profiles.csv` | `9ef1b18f83fca446d5e88bec6fb830010c68ef0025dba36eec65ea725d5f9325` |
 | `outputs/t08_profiles_final/report.json` | `8954b9e653763f0452b94d0c977cd501607b39c24d8b05cd97b56d6f1c61db7b` |
+| `outputs/t08_profiles_final/assignments.csv`, ampliación descriptiva | `94e06596e424680c1f844b4a5d3509cfdc0141e59f3314e67dac7d8eb8a28e6c` |
+| `outputs/profile_section_types_2024/cross.csv`, descriptor TIPOSEC | `f758d27f65da387cadcdd1ad3a1b8ea42213de4f560b89787f46c6ee7f77eee5` |
 
 Las huellas de los ocho artefactos T08, incluido el CSV, se cotejaron con
 `artifacts_sha256` del informe. Esto comprueba esas correspondencias locales, no
@@ -33,7 +35,10 @@ No se repitieron T06–T08.
 | Nombre | Describe un nivel observado de participación relativo a estos cinco segmentos; no una cualidad moral ni un umbral oficial. |
 | Tamaño | `ln_share_pct`: proporción de la LN de los grupos elegibles de 2024. No es proporción de votantes ni de la población total de México. |
 | Participación | `participation_pct`: `100 × SV / (SV + NV)` sumando los conteos del perfil. No se sustituye por el centroide ni se incluye NS como abstención. |
-| Composición | `age_ln_share_pct`: distribución de la LN del perfil entre las bandas de edad ya documentadas. No es distribución de quienes votaron ni participación por edad dentro del perfil. |
+| Composición | `age_ln_share_pct` y `sex_ln_share_pct`: distribución de la LN del perfil por edad o sexo. No es distribución de quienes votaron ni tasa de participación de esas categorías. |
+| Contexto territorial | Distribución de LN por entidad dentro de cada perfil, recalculada desde `assignments.csv` y comparada con el conjunto elegible. No son tasas estatales ni proporciones del perfil dentro de cada entidad; presencia no equivale a concentración. |
+| Tipo de sección | U/M/R se incorpora como descriptor desde el cruce de perfiles fijos: composición dentro del perfil, participación, NS y comparación de composición. No modifica distancias ni asignaciones; la estandarización tiene referencia propia por perfil. |
+| Calidad y soporte | `unspecified_pct` mide NS/LN; la retención de D=SV+NV en soporte común no implica que toda la LN tenga estatus conocido. Distinguir restricción del soporte y reponderación, especialmente en P02. |
 | Precisión | Porcentajes con un decimal, redondeo de mitades hacia arriba. No se ajustan sumas a 100% ni se reconstruyen conteos desde valores redondeados. |
 | Explicaciones no demostradas | Señala lo que no puede concluirse de estos datos; no presenta hipótesis concretas como si ya se hubieran formulado o validado. Las posibles explicaciones de T10 deben identificarse como hipótesis por validar. |
 
@@ -48,11 +53,40 @@ observada, sin etiquetas demográficas ni atribuciones de actitudes:
 | P04 | Participación observada intermedia-alta |
 | P05 | Mayor participación observada |
 
-Edad, sexo y entidad **no entraron en las distancias del modelo**. Para este
-borrador se utiliza composición por edad; no se exige describir todas las
-variables disponibles. No se añaden cruces de edad y sexo, rankings territoriales,
+Los cinco bloques individuales ya reúnen sus fuentes, tamaño, participación,
+edad, sexo, presencia territorial, composición U/M/R, tasas por tipo, comparación
+de composición, NS y límites. Cada uno cita `profiles.csv`, `assignments.csv`,
+`cross.csv` y el informe del cruce, con sus campos o papel de procedencia.
+Las tablas compartidas se mantienen como soporte comparativo, no como sustituto
+de esa narrativa. No se infieren proporciones conjuntas desde marginales ni se
+considera distintiva una mayoría urbana sin contrastarla con el conjunto elegible.
+
+El borrador abre ahora con dos tablas comparativas de las mismas dimensiones
+para P01–P05 y una síntesis descriptiva al inicio de cada bloque. La primera
+tabla compara tamaño, participación conocida, banda de edad más numerosa,
+composición por sexo, presencia territorial y NS; la segunda, composición y
+amplitudes U/M/R. Las cifras detalladas permanecen fuera de esta guía.
+Se explicitan diferencias de los resultados existentes, sin cambiar nombres,
+asignaciones o distancias ni presentar la caracterización posterior como un
+descubrimiento de tipos individuales o causas.
+
+Edad, sexo, entidad y tipo de sección **no entraron en las distancias del modelo**. La ampliación
+descriptiva del 25 de octubre incorpora composición por edad y sexo, comparación
+con el conjunto elegible, distribución territorial y tipo de sección por perfil. Las cifras
+detalladas permanecen en el borrador interno, no en esta guía ni en el paquete
+reducido. No se añaden cruces de edad y sexo, rankings de participación territorial,
 escolaridad ni características no observadas. Los grupos excluidos no se
-interpretan como participación cero.
+interpretan como participación cero; la categoría no binaria no queda
+caracterizada por esta solución elegible.
+
+Las [16 variables disponibles](data-audit.md#matriz-de-variables) no son 16
+características de distancia. El proceso comprueba su esquema y consistencia,
+pero T06 suma los conteos por entidad × sexo × banda de edad. Municipio, sección,
+tipo de sección y distritos se validan en las fuentes, sin conservarlos como
+dimensiones en esa tabla. El tipo de sección ya se recuperó de los originales
+mediante el [cruce P01–P05 con U/M/R](profile-section-cross.md) y se incorporó al
+borrador como descriptor. Municipio y distritos siguen sin analizarse; requerirían
+otra agregación, no inferirlos a partir de los perfiles actuales.
 
 ## Tratamiento de los puntos de cuidado
 
@@ -158,9 +192,73 @@ la guía y las referencias, no ese archivo local.
 
 ## Conservación y siguiente paso
 
+### Ampliación descriptiva comprobada
+
+- Se incorporaron al borrador interno **219 celdas numéricas** cotejadas desde las
+  asignaciones: 192 proporciones territoriales, 12 proporciones por sexo y 15
+  valores de composición por edad, referencia y diferencia; además, seis conteos
+  de presencia territorial. Los porcentajes y diferencias usan un decimal y
+  redondeo de mitades hacia arriba, sin ajustar sumas.
+- Los cinco bloques narrativos originales y el apartado histórico conservaron
+  su contenido, comprobado mediante huellas antes y después de la ampliación.
+  No se cambiaron los nombres ni los 30 porcentajes centrales o las 48 cifras
+  históricas previamente comprobadas.
+- Coincidieron los ocho hashes de artefactos T08 y la huella del informe final.
+  Se verificó también el informe T06 de 2024 registrado y el ZIP original de ese
+  año; `EDONOM` se usa solo para etiquetar las 32 entidades en el borrador interno.
+- No se recalcularon modelos, secciones ni municipios. La comprobación numérica
+  y estructural sustituye RED/GREEN y una suite funcional que no corresponde a
+  esta ampliación documental. No se declara cumplimiento total del reto ni
+  autorización de divulgación; la brecha del alcance general de T10 permanece.
+
+### Integración de TIPOSEC comprobada
+
+Por aprobación expresa, el tipo de sección se integró a la caracterización,
+manteniendo el modelo actual. Se cotejaron **90 celdas numéricas** nuevas con
+`cross.csv` y su informe, con un decimal y redondeo de mitades hacia arriba.
+Se conservaron las tablas anteriores, los cinco bloques narrativos originales
+y todo el apartado histórico mediante comparación de huellas de contenido.
+
+Los artefactos de cálculo T08 y de ambos diagnósticos conservaron sus hashes.
+El borrador T09 sí se actualizó deliberadamente en esta integración: no debe
+confundirse con la garantía de preservación registrada durante el cruce anterior.
+No se modificaron scripts ni se repitieron modelos o suites funcionales; son
+controles numéricos y estructurales de documentación. No se aprueba divulgación
+ni se declara cerrada T10.
+
+### Consolidación de las cinco narrativas — 25 de octubre de 2026
+
+Por autorización expresa se reescribieron los bloques P01–P05 para que cada uno
+reúna la caracterización y sus fuentes. A diferencia de las ampliaciones previas,
+esta consolidación sí cambia esos bloques; conserva sus nombres, identificadores
+y los **30 porcentajes centrales** originales de tamaño, participación y edad.
+
+Se cotejaron además **95 descriptores numéricos** integrados desde T08 y el cruce,
+y la referencia urbana del conjunto elegible. Las tablas existentes conservaron
+su contenido y el apartado histórico mantuvo su huella. Los ocho artefactos T08,
+los dos diagnósticos y sus informes conservaron las correspondencias SHA-256.
+Se comprobaron diez enlaces locales y sus fragmentos; el borrador sigue ignorado
+y no versionado. Son cambios documentales: no se modificaron scripts, modelos,
+asignaciones o condiciones de divulgación ni se repitió una suite funcional.
+
+### Presentación comparativa comprobada
+
+Se añadieron dos tablas de lectura común y cinco síntesis descriptivas para
+mostrar qué distingue a cada perfil dentro de la solución existente. Se cotejaron
+**55 celdas numéricas** desde T08 y el cruce, con un decimal y redondeo de mitades
+hacia arriba. El detalle de cada bloque conservó su huella al excluir únicamente
+la nueva síntesis; las tablas anteriores y el contexto histórico no cambiaron.
+Los informes y artefactos de cálculo mantuvieron sus hashes y se verificaron
+diez enlaces locales y sus fragmentos. No se cambiaron nombres, asignaciones,
+scripts o modelos ni se repitió una suite funcional para esta presentación
+documental. El borrador sigue interno, ignorado y sin autorización de divulgación.
+
+### Conservación del texto consolidado
+
 El borrador local no es un archivo generado por un comando nuevo: se redactó a
 partir de las cinco filas T08 y de los dos resúmenes históricos identificados.
-Si cambian sus hashes o los manifiestos, revisar las descripciones y el contexto
+La ampliación utiliza además las asignaciones de 2024 y las etiquetas del ZIP
+original, con la trazabilidad indicada en el borrador. Si cambian las fuentes,
+sus hashes o los manifiestos, revisar las descripciones y el contexto
 antes de reutilizarlos. No hay cambios de código que requieran una suite funcional;
-corresponden cotejo numérico, lectura estructural y revisión de lenguaje. Las
-estrategias institucionales y su evaluación quedan en T10.
+corresponden cotejo numérico, lectura estructural y revisión de lenguaje.

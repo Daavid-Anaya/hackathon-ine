@@ -97,7 +97,10 @@ e históricas, métricas, exclusiones y evidencia con hashes. `--run-name` permi
 otra ejecución sin sobrescribir. Las salidas son internas y requieren revisión
 de divulgación antes de publicarse; no son historiales de personas. Los nombres
 y descripciones se trabajan en el [borrador interno T09](docs/profile-interpretation.md)
-y las estrategias corresponden a T10. Las narrativas con composición demográfica
+y las [propuestas generales T10](docs/institutional-proposals.md) cubren información,
+accesibilidad y calidad del servicio, sin dirigir acciones por perfil. Son un
+borrador interno pendiente de revisión y cierre, no intervenciones evaluadas.
+Las narrativas con composición demográfica
 se conservan localmente en `outputs/t09_profiles_narrative/README.md`, fuera de
 Git; la rama no las transporta ni autoriza su difusión.
 
@@ -123,6 +126,9 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 - [Comparación de segmentación y limitaciones de T07](docs/segmentation-comparison.md)
 - [Robustez histórica y referencias por serie electoral](docs/historical-robustness.md)
 - [Selección de perfiles y exportaciones trazables T08](docs/profile-selection.md)
+- [Diagnóstico urbano–mixto–rural de 2024, método y límites](docs/section-type-diagnostic.md)
+- [Cruce de perfiles fijos P01–P05 con tipo de sección](docs/profile-section-cross.md)
 - [Interpretación T09, trazabilidad y revisión del borrador interno](docs/profile-interpretation.md)
+- [Propuestas institucionales generales T10 y pendientes de cierre](docs/institutional-proposals.md)
 - [Revisión de divulgación y borrador de resúmenes](docs/disclosure-review.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
