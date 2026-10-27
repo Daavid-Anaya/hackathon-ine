@@ -1,0 +1,2 @@
+# Optional local export environment; deliberately separate from analysis requirements.
+PyMuPDF==1.28.0
