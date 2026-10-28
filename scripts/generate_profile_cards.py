@@ -6,6 +6,7 @@ Chrome/Chromium/Edge and PyMuPDF; see docs/profile-cards.md.
 
 import argparse
 import csv
+from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 from html import escape
 import json
@@ -21,7 +22,10 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 AGE_BANDS = ("18-24", "25-34", "35-44", "45-59", "60+")
 NAMES = ("Menor participación observada", "Participación observada intermedia-baja",
          "Participación observada intermedia", "Participación observada intermedia-alta",
-         "Mayor participación observada")
+          "Mayor participación observada")
+ROUNDING_NOTE = ("Tamaños de LN aproximados en millones (una decimal); "
+                 "porcentajes calculados con conteos originales. "
+                 "El redondeo puede impedir sumas exactas.")
 # Summaries preserve the scope of docs/institutional-proposals.md, not evaluated interventions.
 STRATEGIES = (
     ("Flexibilidad operativa en credencialización y justificación cívico-laboral",
@@ -89,8 +93,8 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def number(value):
-    return f"{int(value):,}".replace(",", " ")
+def approximate_millions(value):
+    return (Decimal(str(value)) / Decimal(1000000)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
 
 
 def read_rows(path):
@@ -199,7 +203,7 @@ def card_body(card, profiles_name, cross_name):
 <h1>{NAMES[index]}</h1><p>{pid} · Estrato agregado, no clasificación de personas</p></header>
 <div class="kpis">
 <div class="kpi">Participación conocida<strong class="value">{row['participation_pct']:.1f}%</strong>SV / (SV + NV)</div>
-<div class="kpi">Peso en LN elegible<strong class="value">{row['ln_share_pct']:.1f}%</strong>{number(row['LN'])} registros LN</div>
+<div class="kpi">Peso en LN elegible<strong class="value">{row['ln_share_pct']:.1f}%</strong>≈ {approximate_millions(row['LN'])} millones de registros LN</div>
 <div class="kpi">Presencia territorial<strong class="value">{int(row['entities'])}</strong>entidades federativas</div>
 <div class="kpi">No especificado (NS)<strong class="value">{row['unspecified_pct']:.1f}%</strong>NS / LN</div></div>
 <div class="charts"><section><h2>Edad · proporción de LN</h2>
@@ -218,7 +222,8 @@ No son atributos individuales ni explicaciones causales. El modelo agrupa única
 Sin contacto individualizado ni rastreo por perfil; canales abiertos y voluntarios. Las propuestas no certifican viabilidad jurídica ni operativa.
 Pendiente de revisión de divulgación conjunta T14–T15 antes de compartir o entregar al concurso.</aside>
 <footer>Fuentes: INE, CCPC 2024; T08: {escape(profiles_name)}; cruce TIPOSEC: {escape(cross_name)}.
-Referencias: docs/profile-interpretation.md y docs/institutional-proposals.md. Exportación: carta 216 × 279 mm, PDF vectorial y PNG a 300 dpi; hashes y versiones en report.json.</footer>
+Referencias: docs/profile-interpretation.md y docs/institutional-proposals.md. Exportación: carta 216 × 279 mm, PDF vectorial y PNG a 300 dpi; hashes y versiones en report.json.
+<p>{ROUNDING_NOTE}</p></footer>
 </article>'''
 
 
@@ -323,8 +328,9 @@ def main():
             (stage / "README.md").write_text(
                 "# T12 — Borrador interno\n\nNo compartir antes de revisión de divulgación T14–T15.\n"
                 "PDF vectorial carta (612 × 792 pt), márgenes 12 mm; PNG 2550 × 3300 px a 300 dpi.\n"
-                "HTML sin recursos remotos. Cinco fichas y cuaderno en orden P01–P05.\n"
-                "report.json registra hashes de entradas/salidas, motor y comprobaciones geométricas.\n"
+                 "HTML sin recursos remotos. Cinco fichas y cuaderno en orden P01–P05.\n"
+                 + ROUNDING_NOTE + "\n" +
+                 "report.json registra hashes de entradas/salidas, motor y comprobaciones geométricas.\n"
                 "Guía reproducible y límites: docs/profile-cards.md.\n" +
                 ("Exportación PDF/PNG realizada.\n" if checks else "HTML únicamente: T12 no está completada.\n"), encoding="utf-8")
             if inputs != {"profiles.csv": sha256(args.profiles), "cross.csv": sha256(args.cross)}:

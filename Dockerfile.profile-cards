@@ -1,0 +1,39 @@
+FROM python:3.12.10-slim-bookworm@sha256:fd95fa221297a88e1cf49c55ec1828edd7c5a428187e67b5d1805692d11588db
+
+# Fixed signed Debian repositories make browser/font resolution repeatable.
+ARG DEBIAN_SNAPSHOT=20261027T000000Z
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    HOME=/tmp \
+    XDG_CACHE_HOME=/tmp/.cache \
+    XDG_CONFIG_HOME=/tmp/.config
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && printf 'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/%s/ bookworm main\ndeb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/%s/ bookworm-security main\n' "$DEBIAN_SNAPSHOT" "$DEBIAN_SNAPSHOT" > /etc/apt/sources.list \
+    && apt-get -o Acquire::Retries=3 update \
+    && apt-get install --no-install-recommends -y chromium fontconfig fonts-liberation2 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+COPY requirements-profile-cards.txt /tmp/requirements-profile-cards.txt
+RUN python -m pip --isolated install --index-url https://pypi.org/simple \
+        --only-binary=:all: --no-cache-dir -r /tmp/requirements-profile-cards.txt \
+    && python -m pip check \
+    && rm /tmp/requirements-profile-cards.txt
+
+COPY docker/profile-cards-fonts.conf /etc/fonts/local.conf
+RUN fc-cache -f \
+    && test "$(fc-match -f '%{family}' Arial)" = 'Liberation Sans' \
+    && test "$(fc-match -f '%{family}' Georgia)" = 'Liberation Serif' \
+    && dpkg-query -W chromium fontconfig fonts-liberation2 > /usr/local/share/profile-cards-packages.txt
+
+RUN groupadd --gid 1000 exporter \
+    && useradd --uid 1000 --gid exporter --no-create-home exporter
+WORKDIR /workspace
+COPY --chown=exporter:exporter scripts/ ./scripts/
+COPY --chown=exporter:exporter tests/ ./tests/
+RUN mkdir outputs && chown -R exporter:exporter /workspace
+USER exporter
+CMD ["python", "-B", "scripts/generate_profile_cards.py", "--browser", "/usr/bin/chromium"]

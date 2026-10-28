@@ -132,6 +132,7 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 - [Cruce de perfiles fijos P01–P05 con tipo de sección](docs/profile-section-cross.md)
 - [Interpretación T09, trazabilidad y revisión del borrador interno](docs/profile-interpretation.md)
 - [Estrategias institucionales diferenciadas y salvaguardas T10](docs/institutional-proposals.md)
-- [Fichas internas T12 y exportación PDF/PNG](docs/profile-cards.md)
+- [Fichas internas T12: contenido, formato y validaciones](docs/profile-cards.md)
+- [Generación de fichas PDF/PNG en Docker](docs/profile-cards-docker.md)
 - [Revisión de divulgación y borrador de resúmenes](docs/disclosure-review.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)

@@ -1,0 +1,18 @@
+profile-cards-seccomp.json contains a modified syscall allowlist derived from:
+
+Microsoft Playwright v1.58.2, utils/docker/seccomp_profile.json
+https://github.com/microsoft/playwright/blob/v1.58.2/utils/docker/seccomp_profile.json
+
+That upstream profile is based on Docker's default seccomp profile:
+https://github.com/docker/engine/blob/d0d99b04cf6e00ed3fc27e81fc3d94e7eda70af3/profiles/seccomp/default.json
+
+The upstream works are distributed under the Apache License, Version 2.0.
+See LICENSE-APACHE-2.0 in this directory. This notice does not license the
+project's analytical work or submitted competition materials.
+
+Modifications: retain only x86/ARM architecture mappings and unprivileged
+application rules; omit capability-dependent privileged rules, ptrace and
+io_uring; add namespace-local chroot and modern unprivileged filesystem calls;
+return ENOSYS for clone3 so libc can fall back to clone. The renderer runs with
+all Linux capabilities dropped and no-new-privileges enabled. No host-level
+mount, keyring, BPF, module-loading or tracing permission is granted.

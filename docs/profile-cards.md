@@ -7,33 +7,28 @@ la revisión conjunta de divulgación de T14–T15 sigue pendiente.
 
 ## Generar PDF y PNG
 
-La exportación local utiliza Chrome, Chromium o Edge instalado y PyMuPDF 1.28.0.
-No modifica las dependencias ni la imagen del análisis. En un entorno Python
-separado, instala `requirements-profile-cards.txt`; no se necesita Pandas para
-este comando. No descarga un navegador ni instala fuentes automáticamente.
+La generación de fichas se documenta únicamente mediante el servicio Docker
+`profile-cards`, separado del análisis. Sigue la [guía de construcción,
+exportación y pruebas en Docker](profile-cards-docker.md). Python, Chromium,
+PyMuPDF y las fuentes se instalan dentro de la imagen, no en el anfitrión.
 
-```powershell
-python -m pip install -r requirements-profile-cards.txt
-python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards_final
-```
-
-Instalar dependencias requiere conectividad; generar las fichas utiliza únicamente
-archivos locales, un perfil de navegador temporal separado del perfil personal y
-HTML sin recursos externos. El comando bloquea resolución de nombres en ese
-proceso, pero no constituye un aislamiento de red equivalente al contenedor.
-No se desactiva el sandbox del navegador. En Linux/macOS, utiliza el mismo comando
-con `--browser` apuntando al ejecutable local; esos entornos requieren sus propias
-pruebas de renderizado. No se afirma equivalencia binaria entre sistemas.
+La salida sigue siendo `outputs/t12_profile_cards/`; el contenedor rechaza una
+carpeta existente sin modificarla. La construcción requiere conectividad, pero
+la exportación se ejecuta sin red y sin desactivar el sandbox del navegador.
+La imagen de análisis no instala el navegador ni las dependencias de exportación.
 
 Entradas predeterminadas:
 
 - `outputs/t08_profiles_final/profiles.csv`: cinco perfiles K=5 de 2024.
 - `outputs/profile_section_types_2024/cross.csv`: cruce U/M/R de los mismos perfiles.
 
-`--profiles` y `--cross` permiten seleccionar otras ubicaciones de esos mismos
-productos. `--output` debe ser una carpeta nueva cuyo padre exista. El comando
-rechaza destinos existentes, entradas incompletas o inconsistentes y opciones
-desconocidas. No modifica las entradas ni recalcula la segmentación.
+La única salida canónica de las fichas es `outputs/t12_profile_cards/`, también
+predeterminada en el generador. `--profiles` y `--cross` permiten seleccionar otras
+ubicaciones de los mismos productos de entrada. El comando exige un destino
+inexistente cuyo padre exista: si la carpeta canónica ya existe, se detiene sin
+sobrescribirla. Cualquier reemplazo posterior debe ser explícito. También rechaza
+entradas incompletas o inconsistentes y opciones desconocidas. No modifica las
+entradas ni recalcula la segmentación.
 
 ## Formato y comprobaciones
 
@@ -56,11 +51,19 @@ Es una referencia histórica elegida para este diseño, Esta adaptación no impl
 Los textos usan tonos oscuros; los lilas claros no se usan como texto sobre
 blanco. La regresión comprueba contraste de al menos 4.5:1 en los pares de texto
 y 3:1 en las barras. El contenido numérico, la tipografía y la geometría no cambian.
-Para exportar esta revisión sin sobrescribir el conjunto anterior:
+El comando de generación anterior aplica esta paleta en la salida canónica.
 
-```powershell
-python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards_lila
-```
+### Tamaños aproximados y porcentajes
+
+Las fichas y el cuaderno muestran tamaños de LN aproximados en millones, con una
+decimal y redondeo `ROUND_HALF_UP`, junto con los porcentajes originales. Los
+porcentajes se calculan con los conteos validados de entrada, no con los tamaños
+aproximados. Los tamaños y porcentajes redondeados pueden no sumar los totales.
+Se conservan los conteos originales para la validación interna; no se modifican
+las entradas ni se recalculan los modelos.
+
+Este criterio se aplica a los PDF, PNG y el cuaderno de la salida canónica,
+que mantienen su condición de borrador pendiente de revisión conjunta.
 
 ### Productos
 
@@ -78,7 +81,7 @@ PNG contienen la página completa, no una captura de una ventana de navegador.
 `--html-only` genera un borrador sin motor PDF y **no completa T12**:
 
 ```powershell
-docker compose run --rm --pull never analysis python -B scripts/generate_profile_cards.py --html-only --output outputs/t12_html_draft
+docker compose --profile profile-cards run --rm --pull never profile-cards python -B scripts/generate_profile_cards.py --html-only --output outputs/t12_profile_cards
 ```
 
 Se validan identidades, conteos LN/SV/NV/NS, tasas, composiciones y reconciliación
@@ -96,14 +99,10 @@ serialización entre ejecuciones; no se promete identidad binaria de los PDF.
 
 ## Pruebas y límites de cierre
 
-```powershell
-python -B -m unittest discover -s tests -p test_generate_profile_cards.py -v
-$env:T12_BROWSER = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-python -B -m unittest discover -s tests -p test_generate_profile_cards.py -v
-```
-
-Sin `T12_BROWSER`, la prueba de exportación real se omite explícitamente; el resto
-utiliza entradas sintéticas. Con esa variable se verifican PDF y PNG reales.
+Ejecuta las [pruebas de generación y renderizado en el servicio
+Docker](profile-cards-docker.md#comprobar-sin-reemplazar-las-fichas). El servicio
+configura `T12_BROWSER` con su Chromium para comprobar PDF y PNG reales; las
+pruebas usan directorios temporales sin reemplazar las fichas existentes.
 La suite habitual del repositorio sigue siendo
 `docker compose run --rm analysis python -m unittest discover -s tests -v`.
 
@@ -118,17 +117,37 @@ Todos los archivos generados permanecen bajo `outputs/`, ignorado por Git. No
 incluyas fichas, conteos reales ni capturas de los perfiles en commits o PR sin
 la revisión de divulgación correspondiente.
 
-## Evidencia local de esta implementación
+## Evidencia de esta implementación y comprobaciones previas
 
-La revisión cromática lila se exportó en `outputs/t12_profile_cards_lila/` y se
-inspeccionaron visualmente sus cinco PNG. Las ocho pruebas T12 pasan, incluida
+Las comprobaciones del anfitrión descritas a continuación son antecedentes
+históricos, no una vía alternativa de generación. El procedimiento documentado
+actual utiliza Docker; su evidencia se conserva en la guía enlazada.
+
+El conjunto revisado con tamaños aproximados está en `outputs/t12_profile_cards/`.
+Conserva cinco PDF/PNG individuales y el cuaderno; la presentación de
+LN cambia a millones con una decimal, sin modificar porcentajes, paleta ni
+entradas. En la comprobación previa del anfitrión, las nueve pruebas T12 pasaron,
+incluida la exportación real. La suite completa de esa comprobación ejecutó
+72 pruebas: 66 aprobadas, dos fallidas y cuatro omitidas. Las
+dos fallidas (`test_installed_versions_match_the_hashed_lock` y
+`test_public_smoke_command_checks_both_libraries`) también fallan en la versión
+base: el anfitrión utiliza Python 3.14 fuera de un entorno virtual, no el entorno
+documentado de Python 3.12. Esa ejecución no constituía una aprobación de la
+suite completa ni una reproducción en Docker. La comprobación posterior en el
+contenedor está registrada en [la guía Docker](profile-cards-docker.md#evidencia-de-la-comprobación-local).
+Los casos CLI `--help`, opción desconocida, ausencia de
+opciones y `--html-only --browser unused` conservan stdout, stderr y código de
+salida frente a la versión base. La revisión de divulgación sigue abierta.
+
+En la revisión cromática lila previa se inspeccionaron visualmente las cinco PNG.
+Las ocho pruebas T12 de esa revisión pasaron, incluida
 la regresión de paleta/contraste y la exportación real. La comparación con la
 versión anterior confirma texto PDF, cifras, geometría y salidas de la CLI sin
 cambios; únicamente se modificó la presentación cromática. Los archivos anteriores
 se conservan intactos. El nuevo conjunto mantiene cinco PDF individuales y un
 cuaderno de cinco páginas, PNG a 300 dpi y fuente mínima de 8.1 pt.
 
-Se generó `outputs/t12_profile_cards_final/` con cinco PDF de una página, cinco
+La exportación inicial se verificó con cinco PDF de una página, cinco
 PNG de 2550 × 3300 px a 300 dpi y el cuaderno PDF de cinco páginas. Se revisaron
 visualmente las cinco PNG: sin recortes o superposiciones visibles. La fuente
 mínima extraída de cada PDF es 8.1 pt y el texto está dentro de la página.
@@ -141,5 +160,6 @@ dependencias como regresiones. La ejecución completa previa de 68 pruebas tuvo
 62 aprobadas, dos fallidas por exigir el entorno documentado
 (Python 3.12 y entorno virtual, frente al Python 3.14 anfitrión) y cuatro omitidas
 relacionadas con Docker. Esos requisitos ya existían en la base y no se relajaron.
-Docker Desktop no estaba disponible: la reproducción en el contenedor y la
-revisión final de divulgación **no se consideran realizadas**.
+En aquella comprobación Docker Desktop no estaba disponible. La evidencia
+posterior del exportador en Docker se documenta por separado; la reproducción
+integral desde las fuentes y la revisión final de divulgación siguen pendientes.

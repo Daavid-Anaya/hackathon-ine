@@ -20,6 +20,7 @@ services:
         read_only: true
         bind:
           create_host_path: false
+
       - type: bind
         source: ./tests
         target: /workspace/tests
@@ -40,6 +41,61 @@ services:
           create_host_path: false
       - ./data/processed:/workspace/data/processed
       - ./outputs:/workspace/outputs
+
+  profile-cards:
+    profiles:
+      - profile-cards
+    build:
+      context: .
+      dockerfile: Dockerfile.profile-cards
+    image: hackathon-ine-profile-cards:local
+    init: true
+    user: "1000:1000"
+    read_only: true
+    network_mode: none
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=./docker/profile-cards-seccomp.json
+    shm_size: 256m
+    pids_limit: 256
+    environment:
+      HACKATHON_CONTAINER_ROLE: profile-cards
+      T12_BROWSER: /usr/bin/chromium
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=1g,mode=1777
+    command: ["python", "-B", "scripts/generate_profile_cards.py", "--browser", "/usr/bin/chromium"]
+    volumes:
+      - type: bind
+        source: ./scripts
+        target: /workspace/scripts
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./tests
+        target: /workspace/tests
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./outputs
+        target: /workspace/outputs
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./outputs/t08_profiles_final
+        target: /workspace/outputs/t08_profiles_final
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./outputs/profile_section_types_2024
+        target: /workspace/outputs/profile_section_types_2024
+        read_only: true
+        bind:
+          create_host_path: false
 
   download:
     extends:
