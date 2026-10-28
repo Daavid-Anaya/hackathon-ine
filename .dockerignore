@@ -1,8 +1,12 @@
 # Solo los archivos reproducibles necesarios para la ejecución entran al contexto de construcción.
 **
 !Dockerfile
+!Dockerfile.profile-cards
 !requirements.in
 !requirements.txt
+!requirements-profile-cards.txt
+!docker/
+!docker/profile-cards-fonts.conf
 !scripts/
 !scripts/*.py
 !tests/
