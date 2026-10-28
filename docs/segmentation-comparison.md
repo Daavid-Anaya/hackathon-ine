@@ -51,11 +51,15 @@ verifica que ambos hashes de entrada permanezcan sin cambios durante la
 ejecución. Registra los hashes del origen, manifiesto y proceso T06 sin afirmar
 que revalida los ZIP originales en T07.
 
-| Contabilidad del escenario base | Grupos | LN |
+| Contabilidad del escenario base | Grupos | LN aprox. (millones) |
 | --- | ---: | ---: |
-| Entrada | 356 | 98,330,348 |
-| Elegibles | 320 | 98,330,243 |
-| Fuera del ajuste, aún contabilizados | 36 | 105 |
+| Entrada | 356 | 98.3 |
+| Elegibles | 320 | 98.3 |
+| Fuera del ajuste, aún contabilizados | 36 | Omitida |
+
+Los tamaños de LN se muestran en millones, redondeados a una decimal; entrada
+y población elegible coinciden a esta precisión, no en sus conteos exactos.
+No deben restarse los valores aproximados para calcular la población excluida.
 
 La elegibilidad es `D = SV + NV >= 30` y `100*D/LN >= 80`. Son **heurísticas
 exploratorias**, no límites de confianza, cortes óptimos validados ni reglas de
@@ -168,9 +172,10 @@ seis perfiles sean institucionalmente preferibles.
   por lo que sus segmentos no pueden interpretarse solo como participación.
   Trate NS como diagnóstico del escenario base, no como una barrera de
   comportamiento descubierta ni un rasgo individual demostrado.
-- Retirar las contribuciones >110 elimina LN=227 y deja sin cambios las seis
-  particiones base (ARI=1), aunque las tasas y los totales cambian ligeramente.
-  Esto no valida las edades extremas; acota su influencia en este experimento.
+- Al retirar las contribuciones de edades mayores de 110 años, las seis particiones
+  base permanecen sin cambios (ARI=1), aunque las tasas y los totales cambian
+  ligeramente. Esto no valida las edades extremas; acota su influencia en este
+  experimento.
 
 ### Ejemplo de interpretación, no selección de perfiles finales
 

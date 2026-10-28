@@ -146,16 +146,19 @@ docker compose run --rm --pull never analysis python -B scripts/export_profiles.
 
 ### Resumen numérico seleccionado de 2024
 
-| Perfil | Grupos | Proporción de LN elegible | Participación basada en conteos | Rango de tasas de los grupos |
-| --- | ---: | ---: | ---: | ---: |
-| `CCPC-2024-K5-P01` | 52 | 13.49% | 40.34% | 32.10–44.92% |
-| `CCPC-2024-K5-P02` | 70 | 21.51% | 50.15% | 45.21–54.48% |
-| `CCPC-2024-K5-P03` | 76 | 23.50% | 59.55% | 54.84–63.15% |
-| `CCPC-2024-K5-P04` | 78 | 25.43% | 67.34% | 63.46–71.30% |
-| `CCPC-2024-K5-P05` | 44 | 16.07% | 76.35% | 71.62–80.92% |
+| Perfil | Grupos | LN aprox. (millones) | Proporción de LN elegible | Participación basada en conteos | Rango de tasas de los grupos |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `CCPC-2024-K5-P01` | 52 | 13.3 | 13.49% | 40.34% | 32.10–44.92% |
+| `CCPC-2024-K5-P02` | 70 | 21.2 | 21.51% | 50.15% | 45.21–54.48% |
+| `CCPC-2024-K5-P03` | 76 | 23.1 | 23.50% | 59.55% | 54.84–63.15% |
+| `CCPC-2024-K5-P04` | 78 | 25.0 | 25.43% | 67.34% | 63.46–71.30% |
+| `CCPC-2024-K5-P05` | 44 | 15.8 | 16.07% | 76.35% | 71.62–80.92% |
 
-Las cinco filas abarcan los 320 grupos elegibles y LN=98.330.243. Los 36 grupos
-excluidos de 2024, con LN=105, se conservan en la contabilidad y en
+Las cinco filas abarcan los 320 grupos elegibles y una LN de aproximadamente
+98.3 millones de registros. Los tamaños de LN se redondean a una decimal de
+millón; pueden no sumar el total mostrado. Los porcentajes se calculan con
+conteos internos exactos, no con los tamaños aproximados. Los 36 grupos
+excluidos de 2024 se conservan en la contabilidad y en
 `exclusions.csv`, no se asignan ni se interpretan como participación cero.
 Las otras elecciones mantienen su propia población y contabilidad en el informe.
 Los nombres y narrativas corresponden a T09; las estrategias institucionales a T10.

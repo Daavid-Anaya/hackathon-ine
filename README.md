@@ -97,9 +97,10 @@ e históricas, métricas, exclusiones y evidencia con hashes. `--run-name` permi
 otra ejecución sin sobrescribir. Las salidas son internas y requieren revisión
 de divulgación antes de publicarse; no son historiales de personas. Los nombres
 y descripciones se trabajan en el [borrador interno T09](docs/profile-interpretation.md)
-y las [propuestas generales T10](docs/institutional-proposals.md) cubren información,
-accesibilidad y calidad del servicio, sin dirigir acciones por perfil. Son un
-borrador interno pendiente de revisión y cierre, no intervenciones evaluadas.
+y las [estrategias T10](docs/institutional-proposals.md) articulan cinco propuestas
+diferenciadas por perfil y medidas transversales de información, accesibilidad y
+calidad del servicio. Su formulación está concluida; no son intervenciones evaluadas
+ni autorizadas para instrumentación o divulgación.
 Las narrativas con composición demográfica
 se conservan localmente en `outputs/t09_profiles_narrative/README.md`, fuera de
 Git; la rama no las transporta ni autoriza su difusión.
@@ -120,6 +121,7 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 
 - [Configuración y ejecución local](docs/local-setup.md)
 - [Índice inicial del documento técnico (T05 → T11)](docs/technical-report-outline.md)
+- Informe técnico interno T11: [PDF de 8 páginas](docs/documento-tecnico.pdf) y [fuente LaTeX](docs/documento-tecnico.tex), pendientes de reproducción integral y revisión de divulgación en T14–T15.
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
 - [Limpieza, validaciones y tabla analítica de T06](docs/data-cleaning.md)
@@ -129,7 +131,7 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 - [Diagnóstico urbano–mixto–rural de 2024, método y límites](docs/section-type-diagnostic.md)
 - [Cruce de perfiles fijos P01–P05 con tipo de sección](docs/profile-section-cross.md)
 - [Interpretación T09, trazabilidad y revisión del borrador interno](docs/profile-interpretation.md)
-- [Propuestas institucionales generales T10 y pendientes de cierre](docs/institutional-proposals.md)
+- [Estrategias institucionales diferenciadas y salvaguardas T10](docs/institutional-proposals.md)
 - [Fichas internas T12 y exportación PDF/PNG](docs/profile-cards.md)
 - [Revisión de divulgación y borrador de resúmenes](docs/disclosure-review.md)
 - [Tablero de tareas del hackathon](docs/tablero-de-tareas-hackathon.md)
