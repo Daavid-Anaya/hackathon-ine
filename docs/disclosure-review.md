@@ -22,9 +22,9 @@ No descarga fuentes, reajusta modelos, modifica T08 ni habilita publicación.
 La revisión se efectuó sobre el commit T08 `24ce422` y sus nueve archivos finales.
 Un diagnóstico local de solo lectura confirmó los siguientes riesgos:
 
-- Las exclusiones de 2024 contienen 36 grupos con LN total de 105; 31 grupos
-  tienen LN menor que cinco. En 28, el resultado conocido es homogéneo: SV o NV
-  es cero. Estos valores son hallazgos, **no umbrales oficiales de supresión**.
+- Las exclusiones de 2024 contienen 36 grupos. Se observaron celdas de tamaño
+  reducido y casos con resultados conocidos homogéneos. Estos hallazgos motivan
+  revisar la divulgación y no constituyen umbrales oficiales de supresión.
 - Aunque se eliminen tasas o `exclusions.csv`, las diferencias entre los totales
   de dos escenarios de `t07_evidence.json` permiten recuperar el vector de conteos
   de un grupo excluido. No se reproducen su clave ni sus conteos en esta guía.
@@ -141,3 +141,76 @@ focalizadas (91.655 s) y comprobaciones adicionales de columnas y textos
 inyectados, rangos, redondeo, dominios, integridad y compatibilidad de las seis
 CLI existentes. Esto verifica el funcionamiento del borrador, no su anonimato
 ni una aprobación para difundirlo.
+
+## Constancia de revisión preliminar de materiales — 2026-10-28
+
+**Resultado: sin hallazgos en los controles descritos; divulgación final
+pendiente.** Esta constancia identifica versiones y comprobaciones concretas.
+No certifica anonimato, no constituye aprobación institucional y no autoriza
+automáticamente el envío al concurso ni la publicación en GitHub.
+
+### Alcance y versiones
+
+Los canales declarados por el equipo son la entrega por correo al INE y un
+repositorio público de GitHub. La posible web no está desplegada y la
+presentación todavía no está elaborada. Esta revisión preliminar cubre los
+materiales existentes, no esos productos futuros ni todo el historial público.
+
+| Material comprobado | Versión local |
+| --- | --- |
+| Informe candidato de ocho páginas | `docs/documento-tecnico (2).pdf` |
+| Cinco fichas PDF, cinco PNG y cuaderno PDF de cinco páginas | `outputs/t12_profile_cards/`, perfiles P01–P05 |
+| Procedencia de las fichas | `outputs/t12_profile_cards/report.json`, con hashes de entradas y artefactos |
+
+Identificadores SHA-256 comprobados:
+
+- Informe candidato: `047606b495ac124e8a47d17c95413c491cb24057d176b3d78286f23cf05c50db`.
+- `report.json` de las fichas: `661ed886f1a2ad19d46372b2a6014c5b30c8cfe1951463bc639b87748ad152d3`.
+
+Los 19 archivos de la carpeta de fichas permanecieron sin cambios durante la
+inspección. El informe candidato aún no sustituye al PDF anterior versionado;
+no debe confundirse la comprobación del candidato con la de esa versión anterior.
+
+### Controles completados
+
+- **Contenido revisado:** tamaños de LN aproximados y porcentajes conservados;
+  omisión de nombres de integrantes en el informe candidato; advertencias sobre
+  agregación, inferencia individual e hipótesis no evaluadas. Se generalizaron
+  los desgloses accesorios de grupos pequeños y el total retirado en la prueba
+  de edades extremas, conservando sus conclusiones metodológicas.
+- **Metadatos de fichas y cuaderno:** los seis PDF tienen el campo de autor vacío,
+  sin XMP, adjuntos, anotaciones ni formularios. No se observaron acciones de
+  apertura, entradas JavaScript del catálogo ni acciones adicionales de página
+  en las claves inspeccionadas.
+- **PNG:** las cinco imágenes conservan 2550 × 3300 píxeles y 300 dpi. No
+  contienen bloques `tEXt`, `zTXt`, `iTXt` ni `eXIf`; sus comprobaciones CRC son
+  válidas.
+- **Integridad y coherencia:** los hashes de artefactos coinciden con el
+  manifiesto y los hashes de entrada corresponden a los archivos de perfiles y
+  cruce utilizados. Los tamaños aproximados, pesos de LN, participación y NS
+  coinciden para los cinco perfiles entre las fichas, el informe candidato y
+  las entradas validadas. Este cotejo no sustituye recalcular los modelos.
+
+Estos resultados se limitan a los archivos y elementos inspeccionados. No son
+una garantía universal de ausencia de contenido oculto ni de inferencias al
+combinar otras fuentes. Los datos originales del INE siguen siendo públicos.
+
+### Pendientes para el cierre conjunto
+
+1. Elaborar la presentación y revisar su coherencia con el informe, las fichas
+   y cualquier anexo; cerrar la lista exacta de archivos y enlaces de la entrega.
+2. Completar T14 desde los datos originales en un entorno limpio. Las pruebas
+   del análisis y la exportación comprobada en Docker no sustituyen ese recorrido.
+3. Resolver las condiciones de publicación y cesión aplicables. Se leyó el
+   formato de carta, que declara obra original e inédita y cesión patrimonial por
+   diez años; no se confirmó con el INE su interpretación respecto del repositorio
+   público. La aceptación de términos por el equipo no constituye por sí sola
+   esa aclaración, ni esta observación demuestra un incumplimiento.
+4. Completar y firmar las cartas al concluir el trabajo, según lo indicado por
+   el equipo, y mantener las versiones cumplimentadas fuera del repositorio público.
+5. Sustituir el PDF anterior por la versión final cuando el equipo lo decida;
+   actualizar la referencia y volver a comprobar cualquier archivo cuyo contenido
+   cambie. Las correcciones actuales no eliminan versiones previas del historial.
+6. Registrar la decisión responsable sobre la versión y los canales definitivos
+   en T15. La revisión preliminar no cambia `publication_authorized: false` ni
+   aprueba automáticamente materiales nuevos, una web futura o usos distintos.

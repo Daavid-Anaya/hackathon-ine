@@ -23,8 +23,6 @@
 \begin{center}
 \textbf{Perfiles agregados de participación ciudadana y estrategias de mejora del servicio institucional}\par
 Reto 1. Perfiles ciudadanos de participación\par
-Juan David Villegas Anaya; Josué Isaí George Rosas;\par
-Gabriela Regina Fernandez Alonso; Lenin Rojas Sánchez\par
 \today
 \end{center}
 
@@ -78,7 +76,7 @@ La ejecución registrada validó 54,872,712 filas y produjo 1,956 grupos anuales
 
 El modelo base utiliza únicamente participación conocida, sin escalado, para mantener la distancia en puntos porcentuales. Cada grupo tiene igual peso en el ajuste: no se minimiza un error ponderado por población. LN sí pondera tamaños, composiciones y tasas descriptivas. Edad, sexo, entidad y TIPOSEC no intervienen en las distancias.
 
-Son elegibles los grupos con SV + NV $\geq 30$ y cobertura conocida $(\mathrm{SV}+\mathrm{NV})/\mathrm{LN}\geq80\%$. En 2024 cumplen 320 grupos; los 36 de la categoría no binaria, con LN conjunta de 105, permanecen contabilizados pero sin asignación. Los umbrales son exploratorios, no garantías de precisión ni reglas de divulgación.
+Son elegibles los grupos con SV + NV $\geq 30$ y cobertura conocida $(\mathrm{SV}+\mathrm{NV})/\mathrm{LN}\geq80\%$. En 2024 cumplen 320 grupos; los 36 de la categoría no binaria permanecen contabilizados, pero sin asignación. Los umbrales son exploratorios, no garantías de precisión ni reglas de divulgación.
 
 Se comparan K-means y Ward con distancia euclidiana para $k=4,5,6$. K-means utiliza k-means++, algoritmo Lloyd, semilla base 0, 20 inicializaciones, máximo 300 iteraciones, tolerancia 0.0001 y un hilo numérico. Se evalúan silueta, tamaños, composición y concordancia entre particiones mediante ARI, donde 1 indica coincidencia completa sobre las unidades comparadas. En K-means, la estabilidad se examina entre 20 semillas (0--19) y 32 reajustes excluyendo una entidad a la vez.
 
@@ -120,21 +118,21 @@ La correlación positiva no implica permanencia en una banda. Se comparan claves
 
 \section{Perfiles ciudadanos de 2024}
 
-Los cinco perfiles abarcan 320 grupos y LN elegible de 98,330,243. Los identificadores CCPC-2024-K5-P01 a CCPC-2024-K5-P05 se ordenan por centroide creciente. Su participación se obtiene desde conteos acumulados, no desde la media simple de tasas de grupos.
+Los cinco perfiles abarcan 320 grupos y una LN elegible de aproximadamente 98.3 millones de registros. Los identificadores CCPC-2024-K5-P01 a CCPC-2024-K5-P05 se ordenan por centroide creciente. Su participación se obtiene desde conteos acumulados, no desde la media simple de tasas de grupos.
 
 \begingroup
 \centering
 \begin{tabular}{@{}lrrrr@{}}
 \hline
-\textbf{Perfil} & \textbf{LN} & \textbf{Peso LN (\%)} & \textbf{Part. (\%)} & \textbf{NS/LN (\%)} \\ \hline
-P01 & 13,262,697 & 13.5 & 40.3 & 7.2 \\
-P02 & 21,153,057 & 21.5 & 50.1 & 6.4 \\
-P03 & 23,110,032 & 23.5 & 59.5 & 7.0 \\
-P04 & 25,006,699 & 25.4 & 67.3 & 6.1 \\
-P05 & 15,797,758 & 16.1 & 76.3 & 5.5 \\ \hline
+\textbf{Perfil} & \shortstack{\textbf{LN aprox.}\\\textbf{(millones)}} & \textbf{Peso LN (\%)} & \textbf{Part. (\%)} & \textbf{NS/LN (\%)} \\ \hline
+P01 & 13.3 & 13.5 & 40.3 & 7.2 \\
+P02 & 21.2 & 21.5 & 50.1 & 6.4 \\
+P03 & 23.1 & 23.5 & 59.5 & 7.0 \\
+P04 & 25.0 & 25.4 & 67.3 & 6.1 \\
+P05 & 15.8 & 16.1 & 76.3 & 5.5 \\ \hline
 \end{tabular}\par
 \endgroup
-\textit{Fuente: resultados finales CCPC 2024; porcentajes con una decimal.}
+\textit{Fuente: resultados finales CCPC 2024; LN aproximada en millones y porcentajes con una decimal. Los porcentajes se calculan con conteos internos exactos; los tamaños redondeados pueden no sumar el total mostrado.}
 
 \subsection{P01 --- Menor participación observada}
 Comprende 52 grupos en 25 entidades. En su LN, 92.1\% corresponde a hombres; las bandas 18--24 y 25--34 representan 36.0\% y 60.0\%. La distribución U/M/R es 66.2\%, 14.5\% y 19.3\%, respectivamente.
