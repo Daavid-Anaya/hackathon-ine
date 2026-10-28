@@ -1,0 +1,254 @@
+\documentclass[11pt]{article}
+
+% Compilar con XeLaTeX o LuaLaTeX; conservar Arial 11 e interlineado 1.5.
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{fontspec}
+\setmainfont{Arial}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{xurl}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\urlstyle{same}
+
+% Separar párrafos sin añadir una línea vacía a cada uno.
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% Encabezado integrado: evita una portada y un índice separados del informe.
+\begin{center}
+\textbf{Perfiles agregados de participación ciudadana y estrategias de mejora del servicio institucional}\par
+Reto 1. Perfiles ciudadanos de participación\par
+Juan David Villegas Anaya; Josué Isaí George Rosas;\par
+Gabriela Regina Fernandez Alonso; Lenin Rojas Sánchez\par
+\today
+\end{center}
+
+\section{Problema y objetivo institucional}
+
+Las diferencias de participación electoral permiten formular preguntas sobre información, accesibilidad y organización del servicio, pero no explican por sí mismas por qué una persona vota o se abstiene. Este estudio utiliza los Conteos Censales de Participación Ciudadana (CCPC) del INE para responder: ¿cómo describir diferencias entre grupos agregados y traducirlas en propuestas institucionales sin atribuir motivaciones individuales no observadas?
+
+\textbf{Objetivo:} identificar y caracterizar cinco perfiles agregados de participación en 2024 mediante una comparación de métodos y soluciones alternativas, y vincularlos con propuestas de información, facilitación y accesibilidad e indicadores de calidad del servicio. Las elecciones de 2009, 2012, 2015, 2018 y 2021 aportan contexto histórico separado. El resultado es una herramienta de diagnóstico y formulación, no una intervención evaluada.
+
+\section{Fuentes y población de análisis}
+
+Se emplean los archivos abiertos CCPC de seis elecciones, sus descripciones de campos y el Manual de usuario 2009--2024. El inventario registra URL, fecha de descarga, tamaño y SHA-256; los originales se conservan sin modificación. No se identificó una versión editorial explícita: las fechas de las direcciones de descarga no se interpretan como versiones.
+
+Se procesaron 192 CSV, 32 por elección. La cobertura excluye casillas especiales y voto desde el extranjero; no representa todas las modalidades de participación.
+
+\begingroup
+\centering
+\begin{tabular}{@{}lrr@{}}
+\hline
+\textbf{Elección} & \textbf{Filas fuente} & \textbf{Grupos analíticos} \\ \hline
+2009 & 8,706,843 & 320 \\
+2012 & 8,604,456 & 320 \\
+2015 & 9,106,059 & 320 \\
+2018 & 9,251,122 & 320 \\
+2021 & 9,430,502 & 320 \\
+2024 & 9,773,730 & 356 \\
+\textbf{Total} & \textbf{54,872,712} & \textbf{1,956} \\ \hline
+\end{tabular}\par
+\endgroup
+\textit{Fuente: archivos CCPC del INE y reportes de procesamiento por elección.}
+
+Las filas son celdas agregadas por elección, entidad, sección, sexo y edad exacta; no son personas únicas. La unidad del modelo es \textbf{entidad $\times$ sexo $\times$ banda de edad, por elección}, con bandas 18--24, 25--34, 35--44, 45--59 y 60 años o más. No se generan combinaciones ausentes ni se suman poblaciones entre años.
+
+\textbf{LN} es lista nominal; \textbf{SV}, registros con sufragio; \textbf{NV}, sin sufragio; y \textbf{NS}, condición no especificada. Edad, sexo y entidad identifican y caracterizan unidades; el tipo de sección urbana, mixta o rural (U/M/R) es un descriptor posterior. No se dispone de motivos de abstención, ocupación, cuidados o discapacidad.
+
+\section{Preparación de los datos y controles de calidad}
+
+El procesamiento valida integridad de fuentes, columnas, dominios, unicidad de claves normalizadas, dependencias geográficas y conteos enteros no negativos con LN positiva. Conserva los ceros iniciales de identificadores, el diagnóstico de faltantes distritales y la elección registrada, sin interpretar fechas ambiguas. Una inconsistencia inválida detiene la ejecución: no se elimina ni corrige silenciosamente.
+
+Se exige $\mathrm{LN}=\mathrm{SV}+\mathrm{NV}+\mathrm{NS}$. Primero se agregan conteos y después se calculan tasas, sin promediar porcentajes de celdas:
+\[
+\text{Participación conocida}=100\frac{\mathrm{SV}}{\mathrm{SV}+\mathrm{NV}},
+\qquad
+\text{No especificado}=100\frac{\mathrm{NS}}{\mathrm{LN}}.
+\]
+Ambas se expresan en porcentaje. Con SV + NV = 0, la participación es indefinida, no cero; NS no se recodifica como abstención. Se distinguen ceros válidos, faltantes y condición no especificada, sin imputar comportamientos. La documentación no permite afirmar la ausencia de supresiones. Las edades mayores de 110 se señalan y conservan en el caso base; su influencia se examina como sensibilidad.
+
+La ejecución registrada validó 54,872,712 filas y produjo 1,956 grupos anuales sin exclusiones de limpieza, conciliando los totales fuente y agregados. Las exclusiones posteriores de elegibilidad del modelo se contabilizan por separado y no reciben perfiles.
+
+\section{Metodología de segmentación}
+
+El modelo base utiliza únicamente participación conocida, sin escalado, para mantener la distancia en puntos porcentuales. Cada grupo tiene igual peso en el ajuste: no se minimiza un error ponderado por población. LN sí pondera tamaños, composiciones y tasas descriptivas. Edad, sexo, entidad y TIPOSEC no intervienen en las distancias.
+
+Son elegibles los grupos con SV + NV $\geq 30$ y cobertura conocida $(\mathrm{SV}+\mathrm{NV})/\mathrm{LN}\geq80\%$. En 2024 cumplen 320 grupos; los 36 de la categoría no binaria, con LN conjunta de 105, permanecen contabilizados pero sin asignación. Los umbrales son exploratorios, no garantías de precisión ni reglas de divulgación.
+
+Se comparan K-means y Ward con distancia euclidiana para $k=4,5,6$. K-means utiliza k-means++, algoritmo Lloyd, semilla base 0, 20 inicializaciones, máximo 300 iteraciones, tolerancia 0.0001 y un hilo numérico. Se evalúan silueta, tamaños, composición y concordancia entre particiones mediante ARI, donde 1 indica coincidencia completa sobre las unidades comparadas. En K-means, la estabilidad se examina entre 20 semillas (0--19) y 32 reajustes excluyendo una entidad a la vez.
+
+Siete sensibilidades modifican una condición a la vez: denominador mínimo 15 o 60; cobertura 70\% o 90\%; ponderación por LN en K-means; participación y NS como variables estandarizadas; y sustracción de contribuciones de edades mayores de 110. La selección combina separación, estabilidad e interpretabilidad, no solamente una métrica.
+
+\section{Validación, selección y contexto histórico}
+
+La comparación de K-means de 2024 presenta los siguientes resultados; los ARI son mínimos entre semillas y al excluir una entidad, respectivamente.
+
+\begingroup
+\centering
+\begin{tabular}{@{}lrrr@{}}
+\hline
+\textbf{Perfiles} & \textbf{Silueta} & \textbf{ARI semillas} & \textbf{ARI sin entidad} \\ \hline
+4 & 0.536 & 0.877 & 0.748 \\
+\textbf{5} & \textbf{0.564} & \textbf{1.000} & \textbf{0.960} \\
+6 & 0.568 & 0.891 & 0.882 \\ \hline
+\end{tabular}\par
+\endgroup
+\textit{Fuente: comparación documentada de 2024; redondeo a tres decimales.}
+
+Se seleccionan cinco perfiles: mejoran la separación frente a cuatro y ofrecen la mayor estabilidad mínima observada. Seis agrega aproximadamente 0.004 de silueta, pero reduce estabilidad y tamaño del segmento menor, sin utilidad institucional adicional demostrada.
+
+Con cobertura mínima de 90\% se conservan 268 grupos y ARI de 0.983 sobre unidades comunes; ponderar por LN produce 0.892 e incorporar NS estandarizado junto con participación, 0.222. Esta última alternativa cambia el significado hacia participación y completitud del registro; se mantiene NS como descriptor separado.
+
+El análisis histórico conserva 36 candidatos anuales, seis referencias fijas y 18 comparaciones. La serie 2012/2018/2024 usa referencia 2024 y la serie 2009/2015/2021, referencia 2021. Dentro de cada serie y $k=4,5,6$, los centroides permanecen fijos y se asigna por proximidad, con empates en la banda inferior. Para cinco bandas:
+
+\begingroup
+\centering
+\begin{tabular}{@{}lrr@{}}
+\hline
+\textbf{Comparación} & \textbf{Spearman} & \textbf{Misma banda (\%)} \\ \hline
+2012--2024 & 0.907 & 46.56 \\
+2009--2021 & 0.673 & 30.94 \\ \hline
+\end{tabular}\par
+\endgroup
+
+La correlación positiva no implica permanencia en una banda. Se comparan claves agregadas comunes, no trayectorias personales; no se equiparan etiquetas entre series ni se declara un $k$ óptimo universal.
+
+\section{Perfiles ciudadanos de 2024}
+
+Los cinco perfiles abarcan 320 grupos y LN elegible de 98,330,243. Los identificadores CCPC-2024-K5-P01 a CCPC-2024-K5-P05 se ordenan por centroide creciente. Su participación se obtiene desde conteos acumulados, no desde la media simple de tasas de grupos.
+
+\begingroup
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\hline
+\textbf{Perfil} & \textbf{LN} & \textbf{Peso LN (\%)} & \textbf{Part. (\%)} & \textbf{NS/LN (\%)} \\ \hline
+P01 & 13,262,697 & 13.5 & 40.3 & 7.2 \\
+P02 & 21,153,057 & 21.5 & 50.1 & 6.4 \\
+P03 & 23,110,032 & 23.5 & 59.5 & 7.0 \\
+P04 & 25,006,699 & 25.4 & 67.3 & 6.1 \\
+P05 & 15,797,758 & 16.1 & 76.3 & 5.5 \\ \hline
+\end{tabular}\par
+\endgroup
+\textit{Fuente: resultados finales CCPC 2024; porcentajes con una decimal.}
+
+\subsection{P01 --- Menor participación observada}
+Comprende 52 grupos en 25 entidades. En su LN, 92.1\% corresponde a hombres; las bandas 18--24 y 25--34 representan 36.0\% y 60.0\%. La distribución U/M/R es 66.2\%, 14.5\% y 19.3\%, respectivamente.
+
+\subsection{P02 --- Participación observada intermedia-baja}
+Reúne 70 grupos en 30 entidades. Los hombres representan 60.8\% de la LN; las edades 18--24, 25--34 y 35--44 aportan 27.0\%, 36.5\% y 33.3\%. La distribución U/M/R es 69.4\%, 13.9\% y 16.7\%.
+
+\subsection{P03 --- Participación observada intermedia}
+Agrupa 76 unidades en 31 entidades. Las mujeres representan 60.6\% de la LN; las bandas 25--34, 35--44 y 45--59 aportan 22.1\%, 25.0\% y 28.4\%. La composición U/M/R es 68.4\%, 12.9\% y 18.7\%.
+
+\subsection{P04 --- Participación observada intermedia-alta}
+Comprende 78 grupos en 31 entidades y el mayor peso de LN. Las mujeres representan 68.0\%; las bandas 45--59 y 60 años o más aportan 42.7\% y 28.6\%. La distribución U/M/R es 69.7\%, 12.9\% y 17.4\%.
+
+\subsection{P05 --- Mayor participación observada}
+Integra 44 grupos en 17 entidades. Las mujeres representan 67.9\% de la LN; las bandas 45--59 y 60 años o más aportan 37.2\% y 61.0\%. La composición U/M/R es 73.4\%, 11.1\% y 15.6\%.
+
+Las composiciones son marginales de LN, no distribuciones conjuntas ni exclusivas de quienes votaron. U/M/R hereda el perfil de su unidad agregada sin reclasificación. El redondeo puede impedir sumas exactas de 100\%. Los nombres describen niveles observados, no compromiso cívico; presencia entre entidades no equivale a clasificación estatal o municipal.
+
+\section{Estrategias institucionales diferenciadas y transversales}
+
+Las barreras siguientes son hipótesis externas no medidas por CCPC, no atributos individuales derivados del clustering. Los indicadores propuestos miden servicio, no incrementos de voto. Las condiciones comunes de instrumentación y privacidad se reúnen en la sección 8.
+
+\subsection{E01 --- Flexibilidad operativa y justificación cívico-laboral}
+\textbf{Evidencia:} P01, participación de 40.3\% y composición joven.
+\textbf{Barrera hipotética:} movilidad, domicilio desactualizado o restricciones de horario.
+
+\textbf{Acción:} ampliar horarios vespertinos y de fin de semana en Módulos de Atención Ciudadana (MAC) seleccionados, proponer reimpresión exprés por robo o extravío y convenios de permiso laboral para votar, sujetos al calendario e instrumentos aplicables.
+\textbf{Canales:} módulos móviles del Registro Federal de Electores (RFE), cartelería y avisos abiertos.
+\textbf{Requerimientos:} personal, compensación horaria, coordinación y convenios.
+
+\textbf{Indicador:} Tasa de Cobertura en Horario Extendido (TCHE) = 100 $\times$ trámites en sábado, domingo o turno vespertino / total de trámites en los MAC seleccionados. Universo: módulos priorizados; ventana: campaña septiembre--febrero; fuente propuesta: SIIRFE.
+
+\subsection{E02 --- Información móvil y certidumbre logística}
+\textbf{Evidencia:} P02, participación de 50.1\% y composición urbana.
+\textbf{Barrera hipotética:} restricciones de tiempo e incertidumbre sobre ubicación, traslado o espera.
+
+\textbf{Acción:} optimizar consulta móvil de casilla, evaluar afluencia estimada, ofrecer síntesis neutrales de candidaturas en Conóceles e información de transporte.
+\textbf{Canales:} Inés por acceso voluntario, QR y micrositio ligero.
+\textbf{Requerimientos:} pruebas de carga, redundancia, accesibilidad, soporte y actualización; no se presupone información suficiente para afluencia en tiempo real.
+
+\textbf{Indicador:} Disponibilidad y Rendimiento de Consulta (DRC) = 100 $\times$ consultas de ubicación y candidaturas resueltas en $\leq2.0$ segundos / consultas entrantes. Universo: solicitudes al servicio; ventana: jornada, 07:00--19:00; fuente propuesta: telemetría UTSI.
+
+\subsection{E03 --- Facilitación territorial y corresponsabilidad comunitaria}
+\textbf{Evidencia:} P03, participación de 59.5\% y 18.7\% de LN rural.
+\textbf{Barrera hipotética:} traslado, cuidados o necesidades lingüísticas.
+
+\textbf{Acción:} evaluar casillas extraordinarias y especiales en localidades aisladas, con dictamen y aprobación, espera sombreada e información bilingüe donde proceda.
+\textbf{Canales:} asambleas, módulos itinerantes, radio y cartelería rural.
+\textbf{Requerimientos:} inspección de rutas, coordinación distrital, señalización e intérpretes; la necesidad territorial exige diagnóstico independiente.
+
+\textbf{Indicador:} Puntualidad en Apertura de Casillas Extraordinarias (PACE) = 100 $\times$ extraordinarias con reporte de instalación antes de 08:30 / extraordinarias aprobadas. Universo: secciones con aprobación; ventana: primer corte de jornada; fuente propuesta: SIJE. Si hay aprobadas y ninguna reporta a tiempo, el resultado es cero, no «No aplica».
+
+\subsection{E04 --- Agilización de flujo y apoyo al funcionariado}
+\textbf{Evidencia:} P04, 25.4\% de LN elegible y participación de 67.3\%.
+\textbf{Barrera hipotética:} saturación, esperas y desgaste operativo.
+
+\textbf{Acción:} optimizar circuitos, canceles reglamentarios y señalización accesible; fortalecer capacitación, mobiliario y acompañamiento.
+\textbf{Canales:} talleres, módulos distritales y comunicación CAE--funcionariado en su función institucional.
+\textbf{Requerimientos:} guías de distribución, presupuesto, equipamiento y simulacros.
+
+\textbf{Indicador:} Tasa de Aceptación y Permanencia de FMDC (TAP) = 100 $\times$ personas capacitadas que integraron efectivamente casilla / cargos requeridos de propietarios y suplentes. Universo: demarcaciones urbanas priorizadas; ventana: segunda etapa de capacitación, mayo--jornada; fuente propuesta: SICE. Se deben conciliar cargos y sustituciones.
+
+\subsection{E05 --- Accesibilidad universal y trato preferencial}
+\textbf{Evidencia:} P05, participación de 76.3\% y 61.0\% de LN de 60 años o más.
+\textbf{Barrera hipotética:} barreras físicas, fatiga o necesidades de apoyos visuales.
+
+\textbf{Acción:} proponer planta baja con acceso a nivel o rampas funcionales, mamparas especiales, lupas, Braille, fila preferencial y descanso.
+\textbf{Canales:} verificación distrital y difusión comunitaria abierta.
+\textbf{Requerimientos:} auditoría de inmuebles, kits y capacitación. La accesibilidad es universal, no exclusiva del perfil.
+
+\textbf{Indicador:} Cumplimiento de Estándares de Accesibilidad Física (CEAF) = 100 $\times$ casillas verificadas en planta baja sin desniveles o con rampa funcional / total de instaladas en el distrito. Ventana: revisión febrero--abril y apertura; fuentes propuestas: Cédula de Verificación de Inmuebles y SIJE.
+
+\textbf{Medidas transversales.} G01: información oficial vigente, medida mediante proporción de entradas revisadas. G02: formatos accesibles equivalentes y texto claro, medidos por materiales que aprueban verificación. G03: orientación y corrección oportuna, medidas por consultas respondidas en plazo. En todos los indicadores, denominador cero significa «No aplica», no cero desempeño.
+
+\section{Supuestos, limitaciones y salvaguardas}
+
+\textbf{Inferencia y robustez.} Los perfiles describen grupos, no personas: no permiten imputar apatía, ocupación, cuidados, aislamiento, lengua, discapacidad o necesidades individuales. Hacerlo sería falacia ecológica. El modelo es univariado, no una tipología sociodemográfica ni una probabilidad de votar. La estabilidad probada no certifica causas, predicción o utilidad operativa; depende de variables, pesos y umbrales y no abarca todos los escenarios. Las exclusiones limitan la población caracterizada.
+
+\textbf{Comparabilidad.} Cambios de composición, cobertura, geografía y NS condicionan la historia; sus referencias son retrospectivas, no cohortes ni identidades permanentes. TIPOSEC es descriptivo, no un efecto territorial. El cruce U/M/R se estandariza con referencia propia por perfil: sus tasas no comparten referencia para comparación directa entre perfiles.
+
+\textbf{Privacidad y neutralidad.} La agregación no elimina riesgos de grupos pequeños. Se excluyen reconstrucción de identidades, rastreo y contacto individualizado basado en perfiles; los canales abiertos y voluntarios también requieren revisión de metadatos y seguridad. Una vista reducida no autoriza publicación. La revisión de divulgación debe considerar conjuntamente tablas, narrativas, fichas y presentación.
+
+\textbf{Viabilidad y reproducción.} Las estrategias no están evaluadas: normativa vigente, instrumentos, recursos y disponibilidad de campos en las fuentes propuestas requieren validación competente. Las comprobaciones por etapa no sustituyen reproducción integral en entorno limpio. Antes de entregar deben verificarse reproducción, trazabilidad, consistencia entre materiales y condiciones de divulgación; el agrupamiento no resuelve esos pendientes.
+
+\section{Conclusiones y referencias}
+
+Cinco perfiles sintetizan diferencias de participación conocida de 2024 con un equilibrio documentado de separación, estabilidad e interpretabilidad. Su caracterización amplía la lectura sin cambiar la variable del modelo. El contexto histórico distingue orden relativo y permanencia en bandas, sin inferir transiciones personales.
+
+La contribución institucional es articular evidencia descriptiva con cinco propuestas de servicio y salvaguardas universales, no explicar abstención ni demostrar aumentos de voto. La documentación de fuentes, reglas, parámetros y exclusiones permite revisar el proceso; su aprovechamiento exige las validaciones indicadas en la sección 8.
+
+\textbf{Fuentes oficiales}
+
+1. INE. \textit{Conteos Censales de Participación Ciudadana}, archivos y documentación de 2009, 2012, 2015, 2018, 2021 y 2024.\par
+\url{https://portal.ine.mx/transparencia/datos-abiertos/visualizacion-datos/conteos-censales-participacion/}
+
+2. INE. \textit{Manual de usuario de la plataforma CCPC 2009--2024}: bandas de edad, denominadores y series.\par
+\url{https://portal.ine.mx/wp-content/uploads/2025/06/Manual-Conteos-Censales-2009-2024.pdf}
+
+3. INE. \textit{Convocatoria del Hackathon ``Hackea la participación: Datos que construyen democracia''}. \url{docs/convocatoria-hackaton.pdf}.
+
+4. INE. \textit{Rúbrica de evaluación del Hackathon}. \url{docs/rubrica-de-evaluacion-hackaton.pdf}.
+
+\textbf{Documentación técnica del proyecto}
+
+5. Fuentes, auditoría y limpieza: \url{docs/data-sources.md}, \url{docs/data-audit.md}, \url{docs/data-cleaning.md}; procedencia y hashes: \url{data/sources.json}.
+
+6. Comparación, historia y selección: \url{docs/segmentation-comparison.md}, \url{docs/historical-robustness.md}, \url{docs/profile-selection.md}.
+
+7. Interpretación y tipo de sección: \url{docs/profile-interpretation.md}, \url{docs/profile-section-cross.md}.
+
+8. Estrategias institucionales: \url{docs/institutional-proposals.md}.
+
+9. Entorno y divulgación: \url{docs/local-setup.md}, \url{docs/disclosure-review.md}.
+
+Las rutas son documentos del proyecto, no enlaces públicos; deben estar disponibles en el repositorio que acompañe la entrega.
+
+\end{document}

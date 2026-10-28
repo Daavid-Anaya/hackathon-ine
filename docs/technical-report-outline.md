@@ -1,10 +1,12 @@
 # Índice del informe técnico — Reto 1
 
-Estructura inicial de T05 que se completará en T11. No es el informe final:
-ya existe una comparación de segmentaciones en T07 y una selección numérica en
-T08 y un [borrador interno de narrativas T09](profile-interpretation.md), pendiente
-de revisión de divulgación e integración, y un [borrador general T10](institutional-proposals.md)
-de información y accesibilidad. No hay efectos demostrados de las propuestas.
+Estructura inicial de T05, utilizada por el [informe integrado T11 de 8 páginas](documento-tecnico.pdf),
+cuya [fuente LaTeX](documento-tecnico.tex) se conserva junto al PDF.
+Este índice no sustituye el informe. Se apoya en la comparación T07, la selección T08,
+las [narrativas internas T09](profile-interpretation.md) y las
+[estrategias diferenciadas y transversales T10](institutional-proposals.md).
+La reproducción integral y revisión de divulgación siguen pendientes en T14–T15.
+No hay efectos demostrados de las propuestas.
 La entrega final debe seguir la
 convocatoria: **8–12 páginas, Arial/Calibri 11 e interlineado de 1.5**,
 con 4–6 perfiles sustentados en evidencia.
@@ -31,6 +33,9 @@ por perfil. No constituye una selección nueva ni decide reemplazar T08.
 
 Utiliza el [inventario de fuentes](data-sources.md) y la [guía de ejecución
 local](local-setup.md) como material de apoyo. Las tablas y figuras deben ser
-consistentes con las fichas de perfiles y la presentación. La distribución de
-páginas y el formato de exportación se decidirán cuando exista evidencia real,
-no mediante contenido de relleno en este índice.
+consistentes con las fichas de perfiles y la presentación. El documento se edita
+en LaTeX y se compila con XeLaTeX o LuaLaTeX, con Arial instalada: 11 puntos,
+interlineado 1.5 y márgenes de 2.5 cm. La versión compilada tiene 8 páginas,
+sin portada ni índice separados y sin contenido de relleno. El PDF permanece
+como borrador interno hasta la revisión de divulgación; compilarlo no reproduce
+el análisis ni completa T14–T15.
