@@ -14,7 +14,7 @@ este comando. No descarga un navegador ni instala fuentes automáticamente.
 
 ```powershell
 python -m pip install -r requirements-profile-cards.txt
-python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards_final
+python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards
 ```
 
 Instalar dependencias requiere conectividad; generar las fichas utiliza únicamente
@@ -30,10 +30,13 @@ Entradas predeterminadas:
 - `outputs/t08_profiles_final/profiles.csv`: cinco perfiles K=5 de 2024.
 - `outputs/profile_section_types_2024/cross.csv`: cruce U/M/R de los mismos perfiles.
 
-`--profiles` y `--cross` permiten seleccionar otras ubicaciones de esos mismos
-productos. `--output` debe ser una carpeta nueva cuyo padre exista. El comando
-rechaza destinos existentes, entradas incompletas o inconsistentes y opciones
-desconocidas. No modifica las entradas ni recalcula la segmentación.
+La única salida canónica de las fichas es `outputs/t12_profile_cards/`, también
+predeterminada en el generador. `--profiles` y `--cross` permiten seleccionar otras
+ubicaciones de los mismos productos de entrada. El comando exige un destino
+inexistente cuyo padre exista: si la carpeta canónica ya existe, se detiene sin
+sobrescribirla. Cualquier reemplazo posterior debe ser explícito. También rechaza
+entradas incompletas o inconsistentes y opciones desconocidas. No modifica las
+entradas ni recalcula la segmentación.
 
 ## Formato y comprobaciones
 
@@ -56,11 +59,19 @@ Es una referencia histórica elegida para este diseño, Esta adaptación no impl
 Los textos usan tonos oscuros; los lilas claros no se usan como texto sobre
 blanco. La regresión comprueba contraste de al menos 4.5:1 en los pares de texto
 y 3:1 en las barras. El contenido numérico, la tipografía y la geometría no cambian.
-Para exportar esta revisión sin sobrescribir el conjunto anterior:
+El comando de generación anterior aplica esta paleta en la salida canónica.
 
-```powershell
-python -B scripts/generate_profile_cards.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe" --output outputs/t12_profile_cards_lila
-```
+### Tamaños aproximados y porcentajes
+
+Las fichas y el cuaderno muestran tamaños de LN aproximados en millones, con una
+decimal y redondeo `ROUND_HALF_UP`, junto con los porcentajes originales. Los
+porcentajes se calculan con los conteos validados de entrada, no con los tamaños
+aproximados. Los tamaños y porcentajes redondeados pueden no sumar los totales.
+Se conservan los conteos originales para la validación interna; no se modifican
+las entradas ni se recalculan los modelos.
+
+Este criterio se aplica a los PDF, PNG y el cuaderno de la salida canónica,
+que mantienen su condición de borrador pendiente de revisión conjunta.
 
 ### Productos
 
@@ -78,7 +89,7 @@ PNG contienen la página completa, no una captura de una ventana de navegador.
 `--html-only` genera un borrador sin motor PDF y **no completa T12**:
 
 ```powershell
-docker compose run --rm --pull never analysis python -B scripts/generate_profile_cards.py --html-only --output outputs/t12_html_draft
+docker compose run --rm --pull never analysis python -B scripts/generate_profile_cards.py --html-only --output outputs/t12_profile_cards
 ```
 
 Se validan identidades, conteos LN/SV/NV/NS, tasas, composiciones y reconciliación

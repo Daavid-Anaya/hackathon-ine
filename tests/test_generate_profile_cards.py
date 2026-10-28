@@ -90,6 +90,57 @@ class ProfileCardTests(unittest.TestCase):
         for name, content in self.before.items():
             self.assertEqual((self.root / name).read_bytes(), content)
 
+    def test_approximate_population_sizes_keep_original_percentages_and_rounding_note(self):
+        with self.profiles.open(encoding="utf-8", newline="") as stream:
+            profiles = list(csv.DictReader(stream))
+        with self.cross.open(encoding="utf-8", newline="") as stream:
+            cross = list(csv.DictReader(stream))
+        sizes = (13250000, 21153000, 23110000, 25007000, 15798000)
+        approximations = ("13.3", "21.2", "23.1", "25.0", "15.8")
+        total = sum(sizes)
+        for row, size in zip(profiles, sizes):
+            scale = size // 1000
+            for key in ("LN", "SV", "NV", "NS"):
+                row[key] = int(row[key]) * scale
+            row["ln_share_pct"] = 100 * size / total
+            for item in cross:
+                if item["profile_id"] == row["profile_id"]:
+                    for key in ("LN", "SV", "NV", "NS"):
+                        item[key] = int(item[key]) * scale
+        self.write_csv(self.profiles, profiles)
+        self.write_csv(self.cross, cross)
+        before = self.snapshot()
+        result = self.run_command("--html-only")
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+        self.assertEqual(json.loads(result.stdout), {
+            "profiles": 5, "exported": False, "output": str(self.root / "cards"),
+        })
+        note = ("Tamaños de LN aproximados en millones (una decimal); "
+                "porcentajes calculados con conteos originales.")
+        notebook = (self.root / "cards/cuaderno_fichas_todas.html").read_text(encoding="utf-8")
+        self.assertEqual(notebook.count(note), 5)
+        for index, (row, size, approximate) in enumerate(zip(profiles, sizes, approximations), 1):
+            text = (self.root / f"cards/ficha_P{index:02d}.html").read_text(encoding="utf-8")
+            for content in (text, notebook):
+                self.assertIn(f"≈ {approximate} millones de registros LN", content)
+                self.assertNotIn(str(size), content)
+                self.assertNotIn(f"{size:,}".replace(",", " "), content)
+                self.assertIn(note, content)
+                self.assertIn("El redondeo puede impedir sumas exactas.", content)
+            for expected in (f"{row['ln_share_pct']:.1f}%",
+                             f"{float(row['participation_pct']):.1f}%", "5.0%",
+                             "Borrador interno", "T14–T15", "Sin contacto individualizado"):
+                self.assertIn(expected, text)
+        readme = (self.root / "cards/README.md").read_text(encoding="utf-8")
+        self.assertIn(note, readme)
+        report = json.loads((self.root / "cards/report.json").read_text(encoding="utf-8"))
+        self.assertTrue(report["internal_only"])
+        self.assertFalse(report["exported"])
+        for name, digest in report["artifacts_sha256"].items():
+            self.assertEqual(hashlib.sha256((self.root / "cards" / name).read_bytes()).hexdigest(), digest)
+        for name, content in before.items():
+            self.assertEqual((self.root / name).read_bytes(), content)
+
     def test_existing_output_is_rejected_and_html_repeat_is_identical(self):
         first = self.run_command("--html-only")
         self.assertEqual(first.returncode, 0, first.stderr)
