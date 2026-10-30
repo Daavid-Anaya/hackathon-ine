@@ -161,5 +161,7 @@ dependencias como regresiones. La ejecución completa previa de 68 pruebas tuvo
 (Python 3.12 y entorno virtual, frente al Python 3.14 anfitrión) y cuatro omitidas
 relacionadas con Docker. Esos requisitos ya existían en la base y no se relajaron.
 En aquella comprobación Docker Desktop no estaba disponible. La evidencia
-posterior del exportador en Docker se documenta por separado; la reproducción
-integral desde las fuentes y la revisión final de divulgación siguen pendientes.
+posterior del exportador en Docker se documenta por separado. La
+[reproducción integral desde las fuentes T14](t14-reproducibility.md) está
+completada con una prueba no ejecutada documentada. La
+[integración técnica T15](disclosure-review.md#integración-t15).

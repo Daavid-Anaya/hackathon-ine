@@ -121,7 +121,7 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 
 - [Configuración y ejecución local](docs/local-setup.md)
 - [Índice inicial del documento técnico (T05 → T11)](docs/technical-report-outline.md)
-- Informe técnico interno T11: [PDF de 8 páginas](docs/documento-tecnico.pdf) y [fuente LaTeX](docs/documento-tecnico.tex), pendientes de reproducción integral y revisión de divulgación en T14–T15.
+- Informe técnico interno T11: [PDF de 8 páginas](docs/documento-tecnico.pdf) y [fuente LaTeX](docs/documento-tecnico.tex). La [reproducción integral T14](docs/t14-reproducibility.md) está completada con una prueba no ejecutada documentada; la [integración técnica T15](docs/disclosure-review.md#integración-t15) está cerrada.
 - [Inventario de fuentes CCPC, documentación y limitaciones](docs/data-sources.md)
 - [Auditoría de variables y unidad de análisis de T04](docs/data-audit.md)
 - [Limpieza, validaciones y tabla analítica de T06](docs/data-cleaning.md)

@@ -212,5 +212,101 @@ combinar otras fuentes. Los datos originales del INE siguen siendo públicos.
    actualizar la referencia y volver a comprobar cualquier archivo cuyo contenido
    cambie. Las correcciones actuales no eliminan versiones previas del historial.
 6. Registrar la decisión responsable sobre la versión y los canales definitivos
-   en T15. La revisión preliminar no cambia `publication_authorized: false` ni
-   aprueba automáticamente materiales nuevos, una web futura o usos distintos.
+    en T15. La revisión preliminar no cambia `publication_authorized: false` ni
+    aprueba automáticamente materiales nuevos, una web futura o usos distintos.
+
+## Integración T15
+
+**Estado: revisión técnica e integración completadas, con observación de derechos
+sin resolver; este cierre no autoriza divulgación ni envío.**
+Esta sección actualiza el estado de trabajo sin modificar la constancia histórica
+del 28 de octubre. La presentación ya existe y T14 está completada con la prueba
+no ejecutada documentada en [su constancia](t14-reproducibility.md).
+
+### Selección del equipo
+
+El equipo indicó: «En un ZIP vamos a entregar lo siguiente: Documento tecnico,
+Fichas de perfil, presentación ejecutiva, enlace del repositorio carta de cesión
+de derechos, carta de declaración de decir la verdad».
+
+| Componente seleccionado | Material local o referencia | Estado |
+| --- | --- | --- |
+| Documento técnico | `docs/documento-tecnico.pdf` | Misma versión de ocho páginas revisada en T14 |
+| Fichas de los cinco perfiles | `outputs/t12_profile_cards/ficha_P01` a `ficha_P05`, en PDF y PNG | Integridad comprobada contra el manifiesto revisado; PDF de una página y PNG de 2550 × 3300 a 300 dpi según la revisión previa |
+| Presentación ejecutiva | `docs/presentacion-reto1-ine.pdf` | Misma versión de diez diapositivas revisada en T14; archivo local sin seguimiento en Git |
+| Enlace al repositorio | `https://github.com/Daavid-Anaya/hackathon-ine` | Acceso público sin autenticación comprobado a la página, un archivo de código y guía de ejecución de `main`; ver alcance más abajo |
+| Carta de cesión de derechos | Documento administrativo privado | El equipo confirmó que está completo y firmado por todas las personas integrantes; sin inspección independiente |
+| Carta declaratoria de decir verdad | Documento administrativo privado | El equipo confirmó que está completo y firmado por todas las personas integrantes; sin inspección independiente |
+
+Las cartas se mantienen fuera del repositorio público. El enlace sustituye la
+inclusión del código fuente como archivos en el ZIP. No se seleccionaron datos
+originales, salidas analíticas detalladas, HTML intermedios, copias anteriores
+ni archivos temporales de verificación. No se creó todavía el ZIP: su montaje,
+comprobación de cartas adjuntas e integridad corresponden a T16.
+
+### Comprobación local de versiones
+
+Se recalcularon los SHA-256 y coincidieron con las versiones ya revisadas:
+
+| Archivo | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `docs/documento-tecnico.pdf` | 95.474 | `92dde8e2eb526fcde4470926d229c2ca5633322c7bd914ba2aa1a3b338dab140` |
+| `docs/presentacion-reto1-ine.pdf` | 4.998.699 | `a5f40452ddac91e515c253548838cca52614ec6de29375bf474bfc40a8d8aede` |
+| `outputs/t12_profile_cards/report.json` | 2.982 | `661ed886f1a2ad19d46372b2a6014c5b30c8cfe1951463bc639b87748ad152d3` |
+
+Los **17 artefactos** enumerados en `report.json` coinciden con sus hashes;
+también coinciden las **dos entradas**, `profiles.csv` y `cross.csv`. La igualdad
+binaria permite conservar la evidencia previa de legibilidad, geometría,
+coherencia y controles acotados de metadatos para esas mismas versiones. No se
+repitieron los modelos, la inspección visual ni el análisis de metadatos; no se
+atribuye una nueva certificación de anonimato ni se da por aprobada la prueba
+omitida en T14.
+
+### Acceso público al repositorio
+
+Con autorización expresa del equipo, se comprobaron mediante consultas web
+públicas, sin iniciar sesión ni usar credenciales:
+
+| Recurso | Resultado |
+| --- | --- |
+| [Repositorio](https://github.com/Daavid-Anaya/hackathon-ine) | Página legible, identificada como pública, con README y listado de código de `main` |
+| [Archivo de código](https://raw.githubusercontent.com/Daavid-Anaya/hackathon-ine/refs/heads/main/scripts/check_environment.py) | Contenido accesible de `scripts/check_environment.py` |
+| [Guía de ejecución](https://raw.githubusercontent.com/Daavid-Anaya/hackathon-ine/refs/heads/main/docs/local-setup.md) | Instrucciones Docker y de reproducción accesibles |
+
+Esto acredita lectura pública en el momento de la comprobación, no una clonación,
+descarga completa ni ejecución desde una copia remota.
+
+### Cotejo final y cierre técnico
+
+Se completó el cotejo de los entregables seleccionados y la rúbrica, sin nuevos
+bloqueos técnicos concretos en el alcance inspeccionado:
+
+| Criterio oficial | Evidencia |
+| --- | --- |
+| Apego a la temática — 35 puntos | Informe pp. 1–5: CCPC, método y cinco perfiles; pp. 5–7: estrategias. Presentación, diapositivas 1–8; fichas P01–P05 |
+| Claridad y solidez — 30 puntos | Informe pp. 2–3 y 7–8: denominadores, comparación, límites y referencias. Presentación, diapositivas 4–6 y 10; reproducción T14 |
+| Originalidad y creatividad — 20 puntos | Informe pp. 5–7 y presentación, diapositivas 7–9: propuestas E01–E05, canales e indicadores; síntesis visual en fichas |
+| Viabilidad institucional — 15 puntos | Informe pp. 5–7: requerimientos y medidas de servicio; presentación, diapositivas 7–10: validación, pilotaje, evaluación y salvaguardas |
+
+Los pesos corresponden a la rúbrica, pp. 1–3. El potencial de aplicación adicional
+que menciona la convocatoria se contempla cualitativamente, sin inventar una
+quinta ponderación ni asignar una calificación. Las nueve métricas de comparación,
+las cinco tasas de participación y los cinco pesos de LN cotejados entre informe
+y presentación coinciden; la ficha P01 también concilia con el informe. Para las
+demás fichas se conserva la evidencia previa mediante los hashes verificados,
+sin atribuir una nueva inspección visual completa ni nuevas mediciones de fuente
+o interlineado. No se observaron impactos causales o de participación presentados
+como demostrados en los contenidos inspeccionados.
+
+Por instrucción del equipo —«Sino hay más que checa deja cerrada la T15»— se cierra
+**T15 como revisión técnica e integración**. Se conserva la presentación sin
+cambios. La compatibilidad de los recursos de Canva con la cesión y la condición
+de obra inédita frente al repositorio público siguen sin confirmación; el cierre
+no certifica cumplimiento jurídico ni aprobación institucional. Los avisos de
+borrador interno y `internal_only: true` no se modifican y se mantiene
+`publication_authorized: false`.
+
+Las cartas están completas y firmadas según el equipo, sin inspección independiente.
+No se repitió T14 ni su prueba de persistencia omitida. T16 queda pendiente para
+montar y abrir el ZIP, comprobar las cartas efectivamente adjuntas, versiones y
+enlaces; T17 corresponde al envío. No se creó el ZIP ni se enviaron materiales.
