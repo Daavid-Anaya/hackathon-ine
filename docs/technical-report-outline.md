@@ -5,7 +5,8 @@ cuya [fuente LaTeX](documento-tecnico.tex) se conserva junto al PDF.
 Este índice no sustituye el informe. Se apoya en la comparación T07, la selección T08,
 las [narrativas internas T09](profile-interpretation.md) y las
 [estrategias diferenciadas y transversales T10](institutional-proposals.md).
-La reproducción integral y revisión de divulgación siguen pendientes en T14–T15.
+La [reproducción integral T14](t14-reproducibility.md) está completada con una prueba
+no ejecutada documentada. La [integración técnica T15](disclosure-review.md#integración-t15).
 No hay efectos demostrados de las propuestas.
 La entrega final debe seguir la
 convocatoria: **8–12 páginas, Arial/Calibri 11 e interlineado de 1.5**,
