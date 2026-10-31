@@ -1,0 +1,19 @@
+.e02-consultation { min-width: 0; }
+.e02-consultation .e02-selector { margin-block: 1.5rem; min-width: 0; }
+.e02-consultation .e02-selector > label { display: block; font-weight: 700; margin-bottom: .5rem; }
+.e02-consultation select { display: block; width: 100%; max-width: 100%; min-width: 0; min-height: 48px; padding: .7rem .6rem; border: 1px solid var(--purple); border-radius: 3px; color: var(--ink); background: var(--paper); font: inherit; }
+.e02-consultation select:focus-visible, .e02-consultation input:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.e02-consultation .e02-station-card { padding: 1.4rem; background: var(--paper); border: 1px solid var(--border); border-top: 3px solid var(--purple); }
+.e02-consultation .e02-station-card h3 { font: 1.5rem/1.3 Georgia, serif; overflow-wrap: anywhere; }
+.e02-consultation .e02-station-card p:last-child { margin-bottom: 0; }
+.e02-consultation .e02-crowd-controls { min-width: 0; margin: 1.7rem 0; padding: 0; border: 0; }
+.e02-consultation legend { padding: 0; margin-bottom: .6rem; color: var(--heading); font-weight: 700; }
+.e02-consultation .e02-crowd-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .6rem; }
+.e02-consultation .e02-crowd-options label { display: flex; align-items: center; gap: .6rem; min-height: 48px; padding: .65rem; background: var(--paper); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; }
+.e02-consultation .e02-crowd-options label:hover { border-color: var(--purple); background: #eae1f5; }
+.e02-consultation input { width: 18px; height: 18px; margin: 0; accent-color: var(--purple); flex-shrink: 0; }
+.e02-consultation .e02-crowd-result { padding: 1.4rem; background: var(--paper); border-left: 4px solid var(--purple); }
+.e02-consultation .e02-crowd-result strong { display: block; margin-bottom: .6rem; color: var(--heading); font: 1.8rem/1.3 Georgia, serif; }
+.e02-consultation .e02-crowd-result p:last-child { margin-bottom: 0; }
+.e02-consultation .e02-crowd-warning { margin-top: 1rem; font-weight: 700; }
+.e02-consultation .e02-disclaimer { margin-bottom: 0; }

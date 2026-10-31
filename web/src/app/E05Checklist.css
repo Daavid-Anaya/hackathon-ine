@@ -1,0 +1,17 @@
+.e05-checklist { min-width: 0; }
+.e05-checklist .e05-conditions { min-width: 0; margin: 1.7rem 0; padding: 0; border: 0; }
+.e05-checklist legend { padding: 0; margin-bottom: .8rem; font-weight: 700; color: var(--heading); }
+.e05-checklist .e05-condition { min-width: 0; margin-bottom: 1rem; padding: 1.3rem; background: var(--paper); border: 1px solid var(--border); }
+.e05-checklist label { display: block; margin-bottom: .5rem; color: var(--heading); font-weight: 700; }
+.e05-checklist select { display: block; width: 100%; min-width: 0; max-width: 100%; min-height: 48px; padding: .7rem .4rem; border: 1px solid var(--purple); border-radius: 3px; color: var(--ink); background: var(--paper); font: inherit; }
+.e05-checklist select:hover { border-color: var(--heading); }
+.e05-checklist select:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.e05-checklist .e05-summary { padding: 1rem; background: var(--lavender); color: var(--heading); font-weight: 700; }
+.e05-checklist .e05-follow-up { margin-block: 1.7rem; }
+.e05-checklist .e05-follow-up ul { list-style: none; padding: 0; }
+.e05-checklist .e05-follow-up li, .e05-checklist .e05-empty { padding: 1.3rem; margin-bottom: 1rem; background: var(--paper); border-left: 3px solid var(--purple); }
+.e05-checklist h4 { margin: 0 0 .6rem; color: var(--heading); font-size: 1.05rem; line-height: 1.4; }
+.e05-checklist .e05-state { margin-bottom: .6rem; color: var(--purple); font-size: .85rem; font-weight: 700; }
+.e05-checklist .e05-follow-up li > :last-child, .e05-checklist .e05-empty > :last-child { margin-bottom: 0; }
+.e05-checklist .e05-warning { font-weight: 700; }
+.e05-checklist .e05-disclaimer { margin-bottom: 0; }

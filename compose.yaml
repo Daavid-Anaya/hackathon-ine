@@ -113,3 +113,44 @@ services:
         read_only: false
         bind:
           create_host_path: false
+
+  web:
+    profiles: [web, web-checks]
+    build:
+      context: ./web
+      target: runtime
+    image: hackathon-ine-web:local
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=32m
+    ports:
+      - "127.0.0.1:4321:8080"
+    networks: [web-preview]
+
+  web-checks:
+    profiles: [web-checks]
+    build:
+      context: ./web
+      target: checks
+    image: hackathon-ine-web-checks:local
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    shm_size: 256m
+    pids_limit: 256
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m,mode=1777
+    environment:
+      WEB_URL: http://web:8080/
+    depends_on:
+      web:
+        condition: service_healthy
+    networks: [web-preview]
+
+networks:
+  web-preview:
+    driver: bridge

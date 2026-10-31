@@ -1,0 +1,13 @@
+# Solo las entradas reproducibles de la web se incluyen en este contexto de construcción aislado.
+**
+!Dockerfile
+!package.json
+!package-lock.json
+!index.html
+!vite.config.ts
+!tsconfig.json
+!nginx.conf
+!src/
+!src/**
+!tests/
+!tests/**
