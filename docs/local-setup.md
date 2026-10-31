@@ -1,8 +1,8 @@
 # Reproducir el entorno local de CCPC
 
 Docker proporciona el entorno de Python, Pandas y Scikit-learn. Utiliza Windows
-PowerShell desde la raíz del repositorio. Es un entorno de análisis por lotes,
-no una aplicación web: la comprobación predeterminada termina y el contenedor sale.
+PowerShell desde la raíz del repositorio. El servicio `analysis` es un entorno de
+análisis por lotes: la comprobación predeterminada termina y el contenedor sale.
 No requiere instalar Python en el equipo anfitrión, cambiar la política de
 ejecución de PowerShell ni realizar un despliegue.
 
@@ -27,7 +27,23 @@ docker compose run --rm analysis python -m unittest discover -s tests -v
 La primera construcción descarga la imagen base de Python y los paquetes fijados;
 puede requerir varios minutos y espacio adicional en disco. Las construcciones
 posteriores reutilizan las capas en caché. No utilices `docker compose up` para
-mantener activo el entorno: no hay ningún servidor que iniciar.
+mantener activo `analysis`: ese servicio no inicia un servidor.
+
+### Web opcional, también desde Docker
+
+La web React + Vite + TypeScript se construye y se sirve en un contenedor separado. No requiere
+Node ni npm en el anfitrión y no modifica el entorno de análisis:
+
+```powershell
+docker compose up --build -d --no-deps --wait web
+```
+
+Abre **http://127.0.0.1:4321**. Usa `docker compose stop web` para detenerla y
+repite el comando de arranque cuando cambies sus fuentes. Solo publica el puerto
+en la interfaz local; no monta `data/`, `outputs/` ni documentos administrativos.
+Las [instrucciones de la web](../web/README.md) incluyen las pruebas de navegador
+dentro de Docker. Los perfiles opcionales evitan que el flujo habitual de
+`analysis`, `download` o `profile-cards` arranque la web por accidente.
 
 La imagen utiliza Python **3.12.10** sobre Debian Bookworm, con la imagen base
 fijada mediante su digest, e instala las dependencias de `requirements.txt` en

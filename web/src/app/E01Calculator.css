@@ -1,0 +1,16 @@
+.e01-page h1 { overflow-wrap: anywhere; }
+.e01-calculator form { display: grid; gap: 1.4rem; margin-block: 1.6rem; }
+.e01-calculator .e01-field { min-width: 0; }
+.e01-calculator label { display: block; font-weight: 700; margin-bottom: .4rem; }
+.e01-calculator input { display: block; width: 100%; min-height: 48px; padding: .7rem .85rem; border: 1px solid var(--purple); border-radius: 3px; background: var(--paper); color: var(--ink); font: inherit; font-variant-numeric: tabular-nums; }
+.e01-calculator input:hover { border-color: var(--heading); }
+.e01-calculator input:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.e01-calculator input[aria-invalid="true"] { border: 2px dashed var(--heading); }
+.e01-calculator .e01-help { margin: .5rem 0 0; font-size: .85rem; }
+.e01-calculator .e01-error { margin: .5rem 0 0; color: var(--heading); font-size: .85rem; font-weight: 700; }
+.e01-calculator .e01-result { margin-block: 1.8rem; padding: 1.5rem; border-radius: 3px; color: var(--paper); background: var(--purple); }
+.e01-calculator .e01-result h3 { margin-bottom: 1rem; color: inherit; font-size: 1rem; }
+.e01-calculator .e01-result strong { display: block; margin-bottom: .6rem; font: 2.7rem/1.2 Georgia, serif; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.e01-calculator .e01-result p { margin-bottom: 0; }
+.e01-calculator .e01-formula { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid var(--lavender); font-size: .82rem; }
+.e01-calculator .e01-disclaimer { margin-bottom: 0; }

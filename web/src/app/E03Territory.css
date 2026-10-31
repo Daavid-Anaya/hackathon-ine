@@ -1,0 +1,19 @@
+.e03-territory { min-width: 0; }
+.e03-territory .e03-selector { margin-block: 1.5rem; min-width: 0; }
+.e03-territory .e03-selector > label { display: block; margin-bottom: .5rem; font-weight: 700; }
+.e03-territory select { display: block; width: 100%; max-width: 100%; min-width: 0; min-height: 48px; padding: .7rem .6rem; border: 1px solid var(--purple); border-radius: 3px; color: var(--ink); background: var(--paper); font: inherit; }
+.e03-territory select:focus-visible, .e03-territory input:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.e03-territory .e03-context, .e03-territory .e03-empty { padding: 1.4rem; border: 1px solid var(--border); background: var(--paper); }
+.e03-territory .e03-context h3 { font: 1.5rem/1.3 Georgia, serif; }
+.e03-territory .e03-context > :last-child, .e03-territory .e03-empty > :last-child { margin-bottom: 0; }
+.e03-territory .e03-barriers { min-width: 0; margin: 1.7rem 0; padding: 0; border: 0; }
+.e03-territory legend { padding: 0; margin-bottom: .6rem; color: var(--heading); font-weight: 700; }
+.e03-territory .e03-barriers label { display: flex; align-items: center; gap: .7rem; min-height: 48px; margin-top: .6rem; padding: .7rem; border: 1px solid var(--border); border-radius: 3px; background: var(--paper); cursor: pointer; }
+.e03-territory .e03-barriers label:hover { border-color: var(--purple); background: #eae1f5; }
+.e03-territory input { width: 18px; height: 18px; margin: 0; flex-shrink: 0; accent-color: var(--purple); }
+.e03-territory .e03-summary { padding: .6rem .8rem; background: var(--lavender); color: var(--heading); font-size: .9rem; font-weight: 700; }
+.e03-territory .e03-measure { margin-bottom: 1rem; padding: 1.4rem; border-left: 3px solid var(--purple); background: var(--paper); }
+.e03-territory h4 { margin: 0 0 1rem; color: var(--heading); font-size: 1.1rem; line-height: 1.4; }
+.e03-territory .e03-measure dd:last-child { margin-bottom: 0; }
+.e03-territory .e03-warning { margin-top: 1.5rem; font-weight: 700; }
+.e03-territory .e03-disclaimer { margin-bottom: 0; }

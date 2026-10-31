@@ -14,9 +14,23 @@ docker compose run --rm analysis
 
 Ejecuta cada comando solo cuando el anterior termine correctamente. El comando
 predeterminado comprueba Python, Pandas y Scikit-learn con datos sintéticos y
-después finaliza. Es un entorno de procesamiento por lotes, no un servidor web;
-no necesita puertos ni servicios en ejecución permanente. Docker proporciona su
-propio entorno de Python 3.12; el uso habitual no requiere Python en el equipo anfitrión.
+después finaliza. El servicio `analysis` es un entorno de procesamiento por lotes:
+no necesita puertos ni ejecución permanente. La web opcional utiliza un servicio
+Docker independiente; no requiere Node, npm ni Python en el equipo anfitrión.
+
+## Levantar la web con Docker
+
+Desde la raíz del repositorio, con Docker Desktop y el motor Linux activos:
+
+```powershell
+docker compose up --build -d --no-deps --wait web
+```
+
+Abre **http://127.0.0.1:4321**. Docker comprueba TypeScript, compila React con Vite y sirve únicamente el resultado
+estático con Nginx. No inicia el análisis ni monta datos o documentos internos.
+Para detenerla, ejecuta `docker compose stop web`. Después de modificar la web,
+repite el comando de arranque para reconstruir la imagen. Consulta los
+[detalles y las pruebas Docker de la web](web/README.md).
 
 ## Datos y comprobaciones
 
@@ -71,7 +85,15 @@ sobrescribir ejecuciones anteriores (`--run-name` permite otra carpeta). Incluye
 semillas, sensibilidad a variables, ponderaciones, elegibilidad y edades extremas,
 tamaños, composición y estabilidad al retirar entidades. No mezcla elecciones
 ni exporta asignaciones finales: esa selección se realiza con el comando T08.
-Todavía no se han implementado una interfaz ni un despliegue.
+El [demostrador institucional local](web/README.md) presenta las cinco propuestas
+en una base React + Vite + TypeScript: Inicio, catálogo, una página por propuesta,
+Evaluación y Evidencia. E01 incorpora una calculadora TCHE y E02 una consulta de
+casillas ficticias con afluencia simulada. E03 permite explorar barreras y medidas
+territoriales hipotéticas y E04 presenta un esquema interactivo de etapas y apoyos
+al funcionariado. E05 incluye una lista de accesibilidad de una sede ficticia, sin
+certificar ni aprobar inmuebles. Las cinco demostraciones son ilustrativas. No es un
+servicio oficial ni consulta sistemas del INE. Solo se levanta con el servicio
+Docker `web`, sin desplegarse en un alojamiento público.
 
 La [extensión histórica de T07](docs/historical-robustness.md) compara las seis
 elecciones por separado y usa referencias fijas dentro de las series
@@ -119,6 +141,7 @@ automáticamente: la revisión final de materiales y canales corresponde a T14�
 
 ## Documentos del proyecto
 
+- [Demostrador institucional: ejecución local, datos y comprobaciones](web/README.md)
 - [Configuración y ejecución local](docs/local-setup.md)
 - [Índice inicial del documento técnico (T05 → T11)](docs/technical-report-outline.md)
 - Informe técnico interno T11: [PDF de 8 páginas](docs/documento-tecnico.pdf) y [fuente LaTeX](docs/documento-tecnico.tex). La [reproducción integral T14](docs/t14-reproducibility.md) está completada con una prueba no ejecutada documentada; la [integración técnica T15](docs/disclosure-review.md#integración-t15) está cerrada.
